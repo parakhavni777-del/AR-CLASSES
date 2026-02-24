@@ -147,7 +147,7 @@ var supbase_anon_key = window.supbase_anon_key;
         header h1 { font-size: 18px; }
         .logo { height: 35px; width: 35px; }
         .form-box { padding: 15px; }
-      F  table { font-size: 12px; }
+        table { font-size: 12px; }
         th, td { padding: 6px; }
         button { padding: 6px 10px; font-size: 11px; }
         input, select { margin-bottom: 8px; }
@@ -245,8 +245,7 @@ var supbase_anon_key = window.supbase_anon_key;
                 <i class="fas fa-save"></i> Save Fee Structure
             </button>
             <button id="cancelFeeBtn" onclick="cancelEditFee()" style="display:none; background:#95a5a6; color:white; width:100%; padding:12px; margin-top:8px;">Cancel Edit</button>
-            <button id="insertTestFeesBtn" onclick="insertTestFees()" style="background: #3498db; color: white; width: 100%; padding: 12px; margin-top: 8px;">⤓ Insert Test Fees</button>
-
+      
             <h3 style="margin-top: 25px;">Current Fee Structure</h3>
             <table id="feeTable">
                 <thead>
@@ -378,36 +377,51 @@ let facultyCache = [];
 let feesCache = [];
 let notesCache = [];
 
-function getLocalStudentsNormalized() {
-    const rows = JSON.parse(localStorage.getItem('students')) || [];
-    return rows.map((s, idx) => ({
-        ...s,
-        row_id: s.row_id || (typeof s.id === 'string' ? s.id : null),
-        local_index: idx,
-        firstName: s.firstName || s.first_name || '',
-        lastName: s.lastName || s.last_name || '',
-        class: s.class || '',
-        subjects: Array.isArray(s.subjects) ? s.subjects : [],
-        guardian: s.guardian || '',
-        guardianMobile: s.guardianMobile || s.guardian_mobile || '',
-        id: s.student_code || s.id || '',
-        password: s.password_legacy || s.password || '',
-        status: s.status || 'pending'
-    }));
+async function resolveStudentRowId(student) {
+    if (student && student.row_id) return student.row_id;
+    if (!student) return null;
+    try {
+        const firstName = (student.firstName || student.first_name || '').trim();
+        const lastName = (student.lastName || student.last_name || '').trim();
+        const guardianMobile = (student.guardianMobile || student.guardian_mobile || '').trim();
+        const cls = (student.class || '').trim();
+        if (!firstName || !lastName || !guardianMobile || !cls) return null;
+
+        const { data, error } = await getDbClient()
+            .from('students')
+            .select('id')
+            .eq('first_name', firstName)
+            .eq('last_name', lastName)
+            .eq('guardian_mobile', guardianMobile)
+            .eq('class', cls)
+            .order('created_at', { ascending: false })
+            .limit(1);
+        if (error) return null;
+        const row = (data || [])[0];
+        return row ? row.id : null;
+    } catch (e) {
+        return null;
+    }
 }
 
 async function requireAdminSession() {
-    const { data: sessionData } = await getDbClient().auth.getSession();
-    const user = sessionData && sessionData.session ? sessionData.session.user : null;
-    if (!user) return false;
+    const localAuth = JSON.parse(localStorage.getItem('adminAuth') || 'null');
+    try {
+        const { data: sessionData } = await getDbClient().auth.getSession();
+        const user = sessionData && sessionData.session ? sessionData.session.user : null;
+        if (!user) return !!(localAuth && localAuth.authenticated);
 
-    const { data: profile } = await getDbClient()
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
+        const { data: profile } = await getDbClient()
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
 
-    return !!profile && profile.role === 'admin';
+        if (profile && profile.role === 'admin') return true;
+        return !!(localAuth && localAuth.authenticated);
+    } catch (e) {
+        return !!(localAuth && localAuth.authenticated);
+    }
 }
 
 async function logoutAdmin() {
@@ -451,25 +465,19 @@ function showFaculty(){
 /* ================= STUDENT LOGIC ================= */
 async function loadStudents(){
     const { data, error } = await getDbClient().from('students').select('*').order('created_at', { ascending: false });
-    const localStudents = getLocalStudentsNormalized();
-    let students = [];
     if(error) {
-        students = localStudents;
-    } else {
-        students = (data || []).map(s => ({
-            ...s,
-            row_id: s.id,
-            local_index: -1,
-            firstName: s.first_name || '',
-            lastName: s.last_name || '',
-            id: s.student_code || '',
-            password: s.password_legacy || ''
-        }));
-        // If DB returns no rows (commonly due RLS select restrictions), use local mirror.
-        if(students.length === 0 && localStudents.length > 0){
-            students = localStudents;
-        }
+        alert('Failed to load students: ' + error.message);
+        return;
     }
+    const students = (data || []).map(s => ({
+        ...s,
+        row_id: s.id,
+        local_index: -1,
+        firstName: s.first_name || '',
+        lastName: s.last_name || '',
+        id: s.student_code || '',
+        password: s.password_legacy || ''
+    }));
     studentsCache = students;
     let tbody = document.querySelector('#studentTable tbody');
     tbody.innerHTML = '';
@@ -504,28 +512,16 @@ async function approveStudent(index){
     if(!s) return;
     let id = s.id || ('AR' + Math.floor(100000 + Math.random() * 900000));
     let pass = s.password || ('PASS' + Math.floor(1000 + Math.random() * 9000));
-    if(!s.row_id && typeof s.local_index === 'number' && s.local_index >= 0){
-        const rows = JSON.parse(localStorage.getItem('students')) || [];
-        if(!rows[s.local_index]) return;
-        rows[s.local_index] = {
-            ...rows[s.local_index],
-            status: 'approved',
-            student_code: id,
-            password_legacy: pass,
-            id: rows[s.local_index].id || id,
-            firstName: rows[s.local_index].firstName || rows[s.local_index].first_name || '',
-            lastName: rows[s.local_index].lastName || rows[s.local_index].last_name || '',
-            guardianMobile: rows[s.local_index].guardianMobile || rows[s.local_index].guardian_mobile || ''
-        };
-        localStorage.setItem('students', JSON.stringify(rows));
-        alert('Student Approved!\nID: ' + id + '\nPassword: ' + pass);
-        await loadStudents();
+    const resolvedRowId = await resolveStudentRowId(s);
+    const rowIdToUse = resolvedRowId || s.row_id;
+    if(!rowIdToUse){
+        alert('Failed to approve student: missing student row id');
         return;
     }
     const { error } = await getDbClient()
         .from('students')
         .update({ status: 'approved', student_code: id, password_legacy: pass })
-        .eq('id', s.row_id);
+        .eq('id', rowIdToUse);
     if(error){
         alert('Failed to approve student: ' + error.message);
         return;
@@ -537,18 +533,16 @@ async function approveStudent(index){
 async function rejectStudent(index){
     const s = studentsCache[index];
     if(!s) return;
-    if(!s.row_id && typeof s.local_index === 'number' && s.local_index >= 0){
-        const rows = JSON.parse(localStorage.getItem('students')) || [];
-        if(!rows[s.local_index]) return;
-        rows[s.local_index] = { ...rows[s.local_index], status: 'rejected' };
-        localStorage.setItem('students', JSON.stringify(rows));
-        await loadStudents();
+    const resolvedRowId = await resolveStudentRowId(s);
+    const rowIdToUse = resolvedRowId || s.row_id;
+    if(!rowIdToUse){
+        alert('Failed to reject student: missing student row id');
         return;
     }
     const { error } = await getDbClient()
         .from('students')
         .update({ status: 'rejected' })
-        .eq('id', s.row_id);
+        .eq('id', rowIdToUse);
     if(error){
         alert('Failed to reject student: ' + error.message);
         return;
@@ -560,14 +554,13 @@ async function deleteStudent(index){
     if(!confirm("Are you sure?")) return;
     const s = studentsCache[index];
     if(!s) return;
-    if(!s.row_id && typeof s.local_index === 'number' && s.local_index >= 0){
-        const rows = JSON.parse(localStorage.getItem('students')) || [];
-        rows.splice(s.local_index, 1);
-        localStorage.setItem('students', JSON.stringify(rows));
-        await loadStudents();
+    const resolvedRowId = await resolveStudentRowId(s);
+    const rowIdToUse = resolvedRowId || s.row_id;
+    if(!rowIdToUse){
+        alert('Failed to delete student: missing student row id');
         return;
     }
-    const { error } = await getDbClient().from('students').delete().eq('id', s.row_id);
+    const { error } = await getDbClient().from('students').delete().eq('id', rowIdToUse);
     if(error){
         alert('Failed to delete student: ' + error.message);
         return;
@@ -578,17 +571,16 @@ async function deleteStudent(index){
 /* ================= FACULTY LOGIC ================= */
 async function loadFaculty(){
     const { data, error } = await getDbClient().from('faculty').select('*').order('created_at', { ascending: false });
-    let faculty = [];
     if(error) {
-        faculty = JSON.parse(localStorage.getItem('faculty')) || [];
-    } else {
-        faculty = (data || []).map(f => ({
-            ...f,
-            row_id: f.id,
-            id: f.faculty_code || '',
-            password: f.password_legacy || ''
-        }));
+        alert('Failed to load faculty: ' + error.message);
+        return;
     }
+    const faculty = (data || []).map(f => ({
+        ...f,
+        row_id: f.id,
+        id: f.faculty_code || '',
+        password: f.password_legacy || ''
+    }));
     facultyCache = faculty;
     let tbody = document.querySelector('#facultyTable tbody');
     tbody.innerHTML = '';
@@ -706,10 +698,17 @@ async function saveEditedCredentials(){
     }
 
     if(editingType === 'student'){
+        const current = studentsCache[editingIndex];
+        const resolvedRowId = await resolveStudentRowId(current);
+        const rowIdToUse = resolvedRowId || editingRowId;
+        if(!rowIdToUse){
+            alert('Failed to update student credentials: missing student row id');
+            return;
+        }
         const { error } = await getDbClient()
             .from('students')
             .update({ student_code: newId, password_legacy: newPass })
-            .eq('id', editingRowId);
+            .eq('id', rowIdToUse);
         if(error){
             alert('Failed to update student credentials: ' + error.message);
             return;
@@ -842,16 +841,11 @@ async function saveFeeStructure(){
 async function loadFees(){
     const db = getDbClient();
     const { data, error } = await db.from('fee_structure').select('*').order('class').order('type');
-    let fees = [];
     if(error){
         alert('Failed to load fees: ' + error.message);
-        fees = JSON.parse(localStorage.getItem('feeStructure')) || [];
-    } else {
-        fees = data || [];
-        // Keep local cache in sync for pages that use fallback/local mode.
-        localStorage.setItem('feeStructure', JSON.stringify(fees));
-        localStorage.setItem('fee_structure', JSON.stringify(fees));
+        return;
     }
+    let fees = data || [];
     fees = fees.map(f => ({
         ...f,
         row_id: f.id || f.row_id || null
@@ -981,12 +975,19 @@ async function initializeDefaultFees(){
         {class: '12th', type: 'Chemistry', amount: 35000}
     ];
 
-    await db.from('fee_structure').insert(defaultFees);
+    const { error: seedError } = await db.from('fee_structure').insert(defaultFees);
+    if(seedError){
+        alert('Failed to initialize default fees: ' + seedError.message);
+    }
 }
 
 async function insertTestFees(){
     const db = getDbClient();
-    await db.from('fee_structure').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    const { error: clearError } = await db.from('fee_structure').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    if(clearError){
+        alert('Failed to clear fees: ' + clearError.message);
+        return;
+    }
     await initializeDefaultFees();
     await loadFees();
     alert('Default test fees inserted successfully.');
@@ -1000,13 +1001,11 @@ let table = document.getElementById('adminNotesList');
 if(!table) return;
 
 const { data, error } = await getDbClient().from('notes').select('*').order('created_at', { ascending: false });
-let notes = [];
 if(error){
-    notes = JSON.parse(localStorage.getItem('notes')) || [];
-    notes = notes.map((n, idx) => ({ ...n, id: idx, faculty_name: n.faculty, file_url: n.fileData, created_at: n.date }));
-} else {
-    notes = data || [];
+    alert('Failed to load notes: ' + error.message);
+    return;
 }
+let notes = data || [];
 
 notesCache = notes;
 table.innerHTML = '';
@@ -1062,16 +1061,10 @@ const note = notesCache[index];
 if(!note) return;
 
 if(confirm('Are you sure you want to delete this file?')){
-    if(typeof note.id === 'number'){
-        let notes = JSON.parse(localStorage.getItem('notes')) || [];
-        notes.splice(note.id, 1);
-        localStorage.setItem('notes', JSON.stringify(notes));
-    } else {
-        const { error } = await getDbClient().from('notes').delete().eq('id', note.id);
-        if(error){
-            alert('Failed to delete note: ' + error.message);
-            return;
-        }
+    const { error } = await getDbClient().from('notes').delete().eq('id', note.id);
+    if(error){
+        alert('Failed to delete note: ' + error.message);
+        return;
     }
     await loadAdminNotes();
 }

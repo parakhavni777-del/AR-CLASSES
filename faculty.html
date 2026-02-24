@@ -734,6 +734,26 @@ async function facultyLogin(){
 }
 
 /* LOAD CLASSES */
+function parseFacultyClasses(rawClasses){
+    if(Array.isArray(rawClasses)) return rawClasses.map(c => (c || '').toString().trim()).filter(Boolean);
+    if(!rawClasses) return [];
+    const raw = rawClasses.toString().trim();
+    if(!raw) return [];
+    // Handles Postgres array string like: {9th,10th}
+    if(raw.startsWith('{') && raw.endsWith('}')){
+        return raw
+            .slice(1, -1)
+            .split(',')
+            .map(c => c.replace(/^\"|\"$/g, '').trim())
+            .filter(Boolean);
+    }
+    // Handles comma-separated text like: 9th,10th
+    if(raw.includes(',')){
+        return raw.split(',').map(c => c.trim()).filter(Boolean);
+    }
+    return [raw];
+}
+
 function loadFacultyClasses(){
 
 let currentFaculty = JSON.parse(localStorage.getItem("currentFaculty"));
@@ -745,7 +765,12 @@ let noteDropdown=document.getElementById("noteClass");
 dropdown.innerHTML='<option value="">Select Class</option>';
 noteDropdown.innerHTML='';
 
-(currentFaculty.classes || []).forEach(cls=>{
+const parsedClasses = parseFacultyClasses(currentFaculty.classes);
+const classesToUse = parsedClasses.length > 0
+    ? parsedClasses
+    : ['4th','5th','6th','7th','8th','9th','10th','11th','12th'];
+
+classesToUse.forEach(cls=>{
 let option=document.createElement("option");
 option.value=cls;
 option.textContent=cls;
@@ -760,6 +785,13 @@ noteDropdown.appendChild(option2);
 
 let currentAttendanceStudents = [];
 
+function normalizeClassToken(value){
+    const raw = (value || '').toString().trim().toLowerCase();
+    if(!raw) return '';
+    const m = raw.match(/\d{1,2}/);
+    return m ? m[0] : raw.replace(/[^a-z0-9]/g, '');
+}
+
 /* ATTENDANCE */
 async function loadStudentsForAttendance(){
 
@@ -769,22 +801,40 @@ studentDiv.innerHTML="";
 
 if(!selectedClass) return;
 
-const { data, error } = await supabase
-    .from('students')
-    .select('*')
-    .eq('class', selectedClass)
-    .eq('status', 'approved');
+let approvedStudents = [];
+let data = null, error = null;
+try {
+    ({ data, error } = await supabase
+        .from('students')
+        .select('*')
+        .order('created_at', { ascending: false }));
+} catch (err) {
+    error = err;
+}
+
+if(!error){
+    approvedStudents = (data||[])
+    .filter(s => {
+        const statusToken = ((s.status || '') + '').trim().toLowerCase();
+        return normalizeClassToken(s.class) === normalizeClassToken(selectedClass)
+            && statusToken.startsWith('approved');
+    })
+    .map(s => ({
+        ...s,
+        row_id: s.id,
+        name: ((s.first_name||'') + ' ' + (s.last_name||'')).trim(),
+        id: s.student_code || ''
+    }));
+}
 
 if(error){
-    studentDiv.innerHTML="<p>Failed to load students</p>";
+    studentDiv.innerHTML = "<p>Failed to load students: " + (error.message || "Unknown error") + "</p>";
     return;
 }
 
-let approvedStudents = (data||[]).map(s => ({
+approvedStudents = approvedStudents.map(s => ({
     ...s,
-    row_id: s.id,
-    name: ((s.first_name||'') + ' ' + (s.last_name||'')).trim(),
-    id: s.student_code || ''
+    name: s.name || ((s.first_name||s.firstName||'') + ' ' + (s.last_name||s.lastName||'')).trim()
 }));
 
 currentAttendanceStudents = approvedStudents;

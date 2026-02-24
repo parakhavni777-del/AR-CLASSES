@@ -114,6 +114,45 @@ All data is stored in browser's **localStorage** (persists across sessions):
 
 ## 🔧 How It Works
 
+## Supabase Setup (Required)
+
+This project now uses Supabase as the primary database source for registrations, approvals, fees, notes, and attendance.
+
+If RLS policies are missing, registration/login/list screens can fail even when the UI looks correct.
+
+Apply policies in Supabase SQL Editor:
+
+`sql
+-- Students
+alter table public.students enable row level security;
+create policy students_insert_public on public.students for insert to public with check (true);
+create policy students_select_public on public.students for select to public using (true);
+create policy students_update_public on public.students for update to public using (true) with check (true);
+create policy students_delete_public on public.students for delete to public using (true);
+
+-- Faculty
+alter table public.faculty enable row level security;
+create policy faculty_insert_public on public.faculty for insert to public with check (true);
+create policy faculty_select_public on public.faculty for select to public using (true);
+create policy faculty_update_public on public.faculty for update to public using (true) with check (true);
+create policy faculty_delete_public on public.faculty for delete to public using (true);
+
+-- Fee Structure
+alter table public.fee_structure enable row level security;
+create policy fee_structure_select_public on public.fee_structure for select to public using (true);
+create policy fee_structure_insert_public on public.fee_structure for insert to public with check (true);
+create policy fee_structure_update_public on public.fee_structure for update to public using (true) with check (true);
+create policy fee_structure_delete_public on public.fee_structure for delete to public using (true);
+`
+
+And ensure grants:
+
+`sql
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to anon, authenticated;
+`
+
+---
 ### Login Flow:
 
 ```
@@ -327,3 +366,4 @@ Enjoy managing your classes! 📚
 ---
 
 **Last Updated**: February 17, 2026
+
