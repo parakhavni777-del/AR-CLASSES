@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR CLASSES - Student Panel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+    }
+    header{
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        position: relative;
+    }
+    header h1 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        font-size: 28px;
+    }
+    .logo {
+        height: 50px;
+        width: 50px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 700;
+        color: #2a5298;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .logout-btn {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .logout-btn:hover { transform: translateY(-50%) scale(1.05); background: #c0392b; }
+    .container{
+        max-width: 1000px;
+        margin: 30px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    h2, h3{
+        margin-top: 0;
+        color: #1e3c72;
+        border-bottom: 3px solid #2a5298;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    input, select, textarea {
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #2a5298;
+        box-shadow: 0 0 8px rgba(42, 82, 152, 0.3);
+    }
+    button{
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        margin: 4px;
+    }
+    .primary-btn{
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .primary-btn:hover{
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+    }
+    .action-btn{
+        background: #2a5298;
+        color: white;
+        box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
+    }
+    .action-btn:hover{
+        background: #1e3c72;
+        transform: translateY(-2px);
+    }
+    .hidden{ display: none !important; }
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th{
+        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+    td{
+        border-bottom: 1px solid #e0e0e0;
+        padding: 12px 15px;
+    }
+    tr:hover { background-color: #f8f9ff; }
+    tr:last-child td { border-bottom: none; }
+    .card {
+        max-width: 1000px;
+        margin: 20px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-left: 5px solid #2a5298;
+    }
+    .card h2, .card h3 { border-bottom: 2px solid #e0e0e0; margin-bottom: 15px; }
+    label {
+        display: block;
+        margin: 15px 0 5px 0;
+        font-weight: 600;
+        color: #1e3c72;
+    }
+    #welcomeButtons { text-align: center; margin: 30px 0; }
+    @media (max-width: 768px) {
+        .container { padding: 15px; margin: 15px; }
+        header h1 { font-size: 18px; }
+        .logo { height: 35px; width: 35px; }
+        .logout-btn { padding: 8px 12px; font-size: 12px; right: 10px; }
+        table { font-size: 12px; }
+        th, td { padding: 8px; }
+        button { padding: 8px 12px; font-size: 12px; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1><div class="logo">AR</div> AR CLASSES - Student Panel</h1>
+    <button id="logoutBtn" class="logout-btn hidden" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+</header>
+
+<div class="container" id="authBox">
+    <div id="welcomeButtons">
+        <button class="action-btn" onclick="showRegister()"><i class="fas fa-user-plus"></i> New Registration</button>
+        <button class="primary-btn" onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Already Registered Login</button>
+    </div>
+
+    <div id="registerSection" class="hidden">
+        <h3><i class="fas fa-clipboard-list"></i> Student Registration</h3>
+        <form onsubmit="registerStudent(event)">
+            <label>First Name *</label>
+            <input type="text" id="firstName" pattern="[A-Za-z]+" required>
+
+            <label>Surname *</label>
+            <input type="text" id="lastName" pattern="[A-Za-z]+" required>
+
+            <label>School Name *</label>
+            <input type="text" id="school" required>
+
+            <label>Guardian Name *</label>
+            <input type="text" id="guardian" required>
+
+            <label>Guardian Mobile *</label>
+            <input type="text" id="guardianMobile" pattern="[0-9]{10}" maxlength="10" required>
+
+            <label>Class *</label>
+            <select id="class" onchange="updateSubjects()" required>
+                <option value="">Select Class</option>
+                <option>4th</option><option>5th</option><option>6th</option>
+                <option>7th</option><option>8th</option>
+                <option>9th</option><option>10th</option>
+                <option>11th</option><option>12th</option>
+            </select>
+
+            <label>Select Subject</label>
+            <select id="subjectDropdown" onchange="addSubject()"></select>
+
+            <table>
+                <thead>
+                    <tr><th>Selected Subjects</th><th>Remove</th></tr>
+                </thead>
+                <tbody id="subjectTable"></tbody>
+            </table>
+
+            <label id="feeLabel">Monthly Fee (Apr-Mar)</label>
+            <div style="background: #f0f8ff; padding: 12px; border-radius: 6px; border-left: 4px solid #2a5298; margin-bottom: 12px;">
+                <p style="margin: 0; font-size: 13px; color: #666;">
+                    <strong id="feeInfo">Classes 4th-8th:</strong> Monthly fee based on subject combination <br>
+                    <strong>Classes 9th-12th:</strong> Yearly course fee per subject
+                </p>
+            </div>
+            <input type="number" id="monthlyFee" readonly>
+
+            <p id="feeWarning" class="hidden" style="color:#c0392b; margin:8px 0 0; font-weight:600;"></p>
+
+            <button class="primary-btn" type="submit">Register</button>
+            <button type="button" onclick="location.reload()">Back</button>
+        </form>
+    </div>
+
+    <div id="loginSection" class="hidden">
+        <h3><i class="fas fa-lock"></i> Student Login</h3>
+        <input type="text" id="loginId" placeholder="Student ID">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button class="primary-btn" onclick="loginStudent()">Login</button>
+        <button type="button" onclick="location.reload()">Back</button>
+    </div>
+</div>
+
+<div id="studentDashboard" class="hidden">
+    <div class="card">
+        <h2><i class="fas fa-book"></i> My Notes & Worksheets</h2>
+        <select id="studentSubjectFilter" onchange="loadStudentNotes()">
+            <option value="">All Subjects</option>
+        </select>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody id="studentNotesList"></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-calendar-check"></i> My Attendance</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="studentAttendanceList"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://kgijlxshajimjbqcrygg.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_1ujAiqxV8MEd0E3SWEIrlQ_EQjM8edG";
+window.__studentDbClient = window.__studentDbClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function getDbClient() {
+    if (window.__studentDbClient && typeof window.__studentDbClient.from === 'function') {
+        return window.__studentDbClient;
+    }
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+        window.__studentDbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return window.__studentDbClient;
+    }
+    throw new Error('Supabase client not initialized');
+}
+
+// Backward-compatible alias for existing code paths.
+var supabase = window.__studentDbClient || null;
+</script>
+
+<script>
+// Authentication Check - Show/Hide sections based on login status
+window.addEventListener('load', function() {
+    if(localStorage.getItem('studentAuth') && localStorage.getItem('currentStudent')) {
+        // User is logged in - show dashboard
+        document.getElementById("authBox").classList.add("hidden");
+        document.getElementById("studentDashboard").classList.remove("hidden");
+        document.getElementById("logoutBtn").classList.remove("hidden");
+        loadStudentNotes();
+        loadStudentAttendance();
+    } else {
+        // User not logged in - show registration/login form (registration by default)
+        document.getElementById("authBox").classList.remove("hidden");
+        document.getElementById("studentDashboard").classList.add("hidden");
+        document.getElementById("logoutBtn").classList.add("hidden");
+        document.getElementById("registerSection").classList.remove("hidden");
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("welcomeButtons").classList.add("hidden");
+    }
+});
+
+let selectedSubjects=[];
+let feeStructureCache = [];
+let feeLoadError = '';
+
+function normalizeFeeToken(value){
+    const raw = (value || '').toString().trim().toLowerCase();
+    if(!raw) return '';
+    const compact = raw.replace(/[^a-z0-9]/g, '');
+    if(compact === 'math' || compact === 'mathematics') return 'maths';
+    if(compact === 'socialstudies' || compact === 'sst' || compact === 'socialscience') return 'socialstudies';
+    if(compact === 'bst' || compact === 'businessstudy') return 'businessstudies';
+    return compact;
+}
+
+function normalizeClassToken(value){
+    const raw = (value || '').toString().trim().toLowerCase();
+    if(!raw) return '';
+    const numMatch = raw.match(/\d{1,2}/);
+    return numMatch ? numMatch[0] : normalizeFeeToken(raw);
+}
+
+// --- Navigation ---
+function showRegister(){
+    document.getElementById("registerSection").classList.remove("hidden");
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("welcomeButtons").classList.add("hidden");
+}
+
+function showLogin(){
+    document.getElementById("loginSection").classList.remove("hidden");
+    document.getElementById("registerSection").classList.add("hidden");
+    document.getElementById("welcomeButtons").classList.add("hidden");
+}
+
+function logout(){
+    if(confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem("currentStudent");
+        localStorage.removeItem("studentAuth");
+        window.location.href = "index.html";
+    }
+}
+
+// --- Subject Logic ---
+async function updateSubjects(){
+    let cls = document.getElementById("class").value;
+    let dropdown = document.getElementById("subjectDropdown");
+    dropdown.innerHTML = '<option value="">Select Subject</option>';
+
+    let subjects = [];
+    if(['4th','5th','6th','7th','8th'].includes(cls)){
+        subjects=["English","Maths","Sanskrit","Science","Social Studies","Hindi"];
+    } else if(['9th','10th','11th','12th'].includes(cls)){
+        // Use configured fee types so selected subjects always match configured rows.
+        const fees = await getFeeStructure();
+        const classFees = fees.filter(f => normalizeClassToken(f.class) === normalizeClassToken(cls));
+        const dynamicSubjects = [...new Set(classFees.map(f => (f.type || '').toString().trim()).filter(Boolean))];
+        if(dynamicSubjects.length > 0){
+            subjects = dynamicSubjects;
+        } else if(['9th','10th'].includes(cls)){
+            subjects=["English","Maths","Science","Social Studies"];
+        } else {
+            subjects=["Accounts","Business Studies","Economics"];
+        }
+    }
+
+    subjects.forEach(sub=>{
+        let opt = document.createElement("option");
+        opt.text = sub; opt.value = sub;
+        dropdown.appendChild(opt);
+    });
+
+    selectedSubjects = [];
+    document.getElementById("subjectTable").innerHTML = "";
+    document.getElementById("monthlyFee").value = "";
+    
+    // Update fee label based on class
+    updateFeeLabel(cls);
+}
+
+function updateFeeLabel(cls){
+    let feeLabel = document.getElementById("feeLabel");
+    let feeInfo = document.getElementById("feeInfo");
+    
+    if(['4th','5th','6th','7th','8th'].includes(cls)){
+        feeLabel.textContent = "Monthly Fee (April-March) *";
+        feeInfo.innerHTML = "<strong style='color: #2a5298;'>Class " + cls + ":</strong> Monthly fee calculated for 12 months (April to March)";
+    } else if(['9th','10th','11th','12th'].includes(cls)){
+        feeLabel.textContent = "Yearly Course Fee *";
+        feeInfo.innerHTML = "<strong style='color: #2a5298;'>Class " + cls + ":</strong> Annual course fee per subject";
+    }
+}
+
+function addSubject(){
+    let sub = document.getElementById("subjectDropdown").value;
+    if(sub && !selectedSubjects.includes(sub)){
+        selectedSubjects.push(sub);
+        renderSubjects();
+        calculateFee();
+    }
+}
+
+function removeSubject(index){
+    selectedSubjects.splice(index,1);
+    renderSubjects();
+    calculateFee();
+}
+
+function renderSubjects(){
+    let table = document.getElementById("subjectTable");
+    table.innerHTML = "";
+    selectedSubjects.forEach((sub,index)=>{
+        let row = document.createElement("tr");
+        row.innerHTML = `<td>${sub}</td>
+        <td><button class="action-btn" type="button" onclick="removeSubject(${index})">Remove</button></td>`;
+        table.appendChild(row);
+    });
+}
+
+async function getFeeStructure(){
+    feeLoadError = '';
+    try {
+        const { data, error } = await getDbClient()
+            .from('fee_structure')
+            .select('*')
+            .order('class')
+            .order('type');
+        if(error){
+            feeLoadError = error.message || 'Failed to load fee structure';
+            feeStructureCache = [];
+            return feeStructureCache;
+        }
+        feeStructureCache = Array.isArray(data) ? data : [];
+        return feeStructureCache;
+    } catch (err) {
+        feeLoadError = (err && err.message) ? err.message : 'Failed to load fee structure';
+        feeStructureCache = [];
+        return feeStructureCache;
+    }
+}
+
+async function calculateFee(){
+    let selectedClass = document.getElementById("class").value;
+    let fees = await getFeeStructure();
+    let total = 0;
+
+    if(!selectedClass || selectedSubjects.length === 0){
+        document.getElementById("monthlyFee").value = "";
+        return;
+    }
+
+    // normalize class key for robust matching
+    let clsNorm = normalizeClassToken(selectedClass);
+
+    let feeWarningEl = document.getElementById("feeWarning");
+    feeWarningEl.classList.add('hidden');
+    feeWarningEl.textContent = '';
+    if(feeLoadError){
+        feeWarningEl.textContent = 'Unable to load latest fee structure: ' + feeLoadError;
+        feeWarningEl.classList.remove('hidden');
+        document.getElementById("monthlyFee").value = "";
+        return;
+    }
+
+    if(['4th','5th','6th','7th','8th'].includes(selectedClass)){
+        let count = selectedSubjects.length;
+        let combination = "";
+        if(count==1) combination="Any1";
+        else if(count==2) combination="Any2";
+        else if(count==3) combination="Any3";
+        else if(count==4) combination="Any4";
+        else if(count>=5) combination="All";
+
+        let match = fees.find(f=> normalizeClassToken(f.class)===clsNorm && normalizeFeeToken(f.type)===normalizeFeeToken(combination));
+        if(match) {
+            total = parseInt(match.amount) || 0;
+        } else {
+            feeWarningEl.textContent = 'No fee configured for selected class/combination. Please contact admin.';
+            feeWarningEl.classList.remove('hidden');
+        }
+    } else if(['9th','10th','11th','12th'].includes(selectedClass)){
+        let missing = [];
+        selectedSubjects.forEach(sub=>{
+            let subNorm = normalizeFeeToken(sub);
+            let match = fees.find(f=> normalizeClassToken(f.class)===clsNorm && normalizeFeeToken(f.type)===subNorm);
+            if(match) total += parseInt(match.amount) || 0;
+            else missing.push(sub);
+        });
+
+        if(missing.length === selectedSubjects.length){
+            feeWarningEl.textContent = 'No fees configured for the selected subjects. Please contact admin.';
+            feeWarningEl.classList.remove('hidden');
+        } else if(missing.length > 0){
+            feeWarningEl.textContent = 'Some subjects are missing fee configuration: ' + missing.join(', ') + '. Contact admin.';
+            feeWarningEl.classList.remove('hidden');
+        }
+    }
+
+    document.getElementById("monthlyFee").value = total ? total : "";
+}
+
+// --- CORE REGISTRATION ---
+async function registerStudent(e){
+    if(e && typeof e.preventDefault === 'function') e.preventDefault();
+
+    const feeValue = Number(document.getElementById("monthlyFee").value || 0);
+    if(!document.getElementById("class").value || selectedSubjects.length === 0){
+        alert("Please select class and at least one subject");
+        return;
+    }
+    if(feeValue <= 0){
+        alert("Fee is not configured for the selected class/subjects. Please contact admin.");
+        return;
+    }
+    if(feeLoadError){
+        alert("Cannot register right now because latest fee structure could not be loaded: " + feeLoadError);
+        return;
+    }
+
+    const payload = {
+        first_name: document.getElementById("firstName").value,
+        last_name: document.getElementById("lastName").value,
+        school: document.getElementById("school").value,
+        guardian: document.getElementById("guardian").value,
+        guardian_mobile: document.getElementById("guardianMobile").value,
+        class: document.getElementById("class").value,
+        subjects: selectedSubjects,
+        monthly_fee: feeValue,
+        course_fee: feeValue,
+        status: "pending"
+    };
+
+    const { error } = await getDbClient().from('students').insert(payload);
+    if(error){
+        alert('Registration failed: ' + error.message);
+        return;
+    }
+
+    // Local mirror helps admin panel display pending rows if DB select is policy-restricted.
+    const localRows = JSON.parse(localStorage.getItem('students')) || [];
+    localRows.push({
+        first_name: payload.first_name,
+        last_name: payload.last_name,
+        firstName: payload.first_name,
+        lastName: payload.last_name,
+        school: payload.school,
+        guardian: payload.guardian,
+        guardian_mobile: payload.guardian_mobile,
+        guardianMobile: payload.guardian_mobile,
+        class: payload.class,
+        subjects: payload.subjects,
+        monthly_fee: payload.monthly_fee,
+        course_fee: payload.course_fee,
+        status: payload.status,
+        created_at: new Date().toISOString()
+    });
+    localStorage.setItem('students', JSON.stringify(localRows));
+
+    alert("Registration Submitted. Wait for Admin Approval. Admin will assign your Student ID and Password.");
+    location.reload();
+}
+
+// --- LOGIN ---
+async function loginStudent(){
+    let id = document.getElementById("loginId").value.trim();
+    let pass = document.getElementById("loginPass").value;
+
+    const { data, error } = await getDbClient()
+        .from('students')
+        .select('*')
+        .eq('student_code', id)
+        .eq('password_legacy', pass)
+        .limit(1);
+
+    if(error){
+        alert(error.message || 'Login failed');
+        return;
+    }
+
+    let row = (data || [])[0];
+    if(!row){
+        alert("Invalid ID or Password");
+        return;
+    }
+
+    if(row.status !== "approved"){
+        alert("Not approved by Admin yet.");
+        return;
+    }
+
+    const user = {
+        ...row,
+        row_id: row.id,
+        id: row.student_code || '',
+        password: row.password_legacy || '',
+        name: ((row.first_name||'') + ' ' + (row.last_name||'')).trim(),
+        firstName: row.first_name || '',
+        lastName: row.last_name || '',
+        guardianMobile: row.guardian_mobile || ''
+    };
+
+    localStorage.setItem("currentStudent", JSON.stringify(user));
+    localStorage.setItem("studentAuth", JSON.stringify({authenticated: true}));
+    alert("Login Successful.");
+    location.reload();
+}
+
+// --- Data Loading ---
+async function loadStudentNotes(){
+    let currentStudent = JSON.parse(localStorage.getItem("currentStudent"));
+    if(!currentStudent) return;
+
+    let table = document.getElementById("studentNotesList");
+    let subjectFilter = document.getElementById("studentSubjectFilter").value;
+
+    const { data, error } = await getDbClient()
+        .from('notes')
+        .select('*')
+        .eq('class', currentStudent.class)
+        .order('created_at', { ascending: false });
+
+    if(error){
+        table.innerHTML = `<tr><td colspan="4">Failed to load notes</td></tr>`;
+        return;
+    }
+
+    let studentNotes = data || [];
+    table.innerHTML = "";
+
+    let subjects = [...new Set(studentNotes.map(n => n.subject))];
+    let filterDropdown = document.getElementById("studentSubjectFilter");
+    filterDropdown.innerHTML = '<option value="">All Subjects</option>';
+    subjects.forEach(sub=>{
+        let opt = document.createElement("option");
+        opt.value = sub; opt.text = sub;
+        filterDropdown.add(opt);
+    });
+
+    if(subjectFilter) studentNotes = studentNotes.filter(n => n.subject == subjectFilter);
+
+    if(studentNotes.length === 0){
+        table.innerHTML = `<tr><td colspan="4">No notes available</td></tr>`;
+        return;
+    }
+
+    studentNotes.forEach(note=>{
+        const date = note.created_at ? new Date(note.created_at).toLocaleDateString() : '-';
+        table.innerHTML += `<tr>
+            <td>${note.title || '-'}</td>
+            <td>${note.subject || '-'}</td>
+            <td>${date}</td>
+            <td><a href="${note.file_url}" download="${note.file_name || 'note'}"><button class="primary-btn">Download</button></a></td>
+        </tr>`;
+    });
+}
+
+async function loadStudentAttendance(){
+    let currentStudent = JSON.parse(localStorage.getItem("currentStudent"));
+    if(!currentStudent) return;
+
+    let table = document.getElementById("studentAttendanceList");
+    table.innerHTML = "";
+
+    const { data, error } = await getDbClient()
+        .from('attendance')
+        .select('*')
+        .eq('student_id', currentStudent.row_id)
+        .order('date', { ascending: false });
+
+    if(error){
+        table.innerHTML = `<tr><td colspan="3">Failed to load attendance</td></tr>`;
+        return;
+    }
+
+    (data || []).forEach(record=>{
+        table.innerHTML += `<tr>
+            <td>${record.date}</td>
+            <td>${record.subject || '-'}</td>
+            <td>${record.status}</td>
+        </tr>`;
+    });
+
+    if(table.innerHTML == "") table.innerHTML = `<tr><td colspan="3">No attendance records</td></tr>`;
+}
+
+// --- Auth Check on Load ---
+function checkAuth(){
+    let currentStudent = JSON.parse(localStorage.getItem("currentStudent"));
+    if(currentStudent){
+        document.getElementById("authBox").classList.add("hidden");
+        document.getElementById("studentDashboard").classList.remove("hidden");
+        document.getElementById("logoutBtn").classList.remove("hidden");
+        loadStudentNotes();
+        loadStudentAttendance();
+    }
+}
+
+checkAuth();
+getFeeStructure();
+</script>
+
+</body>
+</html>
+
+
