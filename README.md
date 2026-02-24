@@ -367,3 +367,66 @@ Enjoy managing your classes! 📚
 
 **Last Updated**: February 17, 2026
 
+
+## New Features Added (Feb 24, 2026)
+
+The project now includes:
+- Notes upload to Supabase Storage bucket (`notes-files`) with student/parent download support.
+- Admin attendance monitor.
+- Admin manual fee profile + cash payment ledger.
+- Timetable management.
+- Exam/Test marks module (faculty entry, student/parent/admin views).
+- Parent portal login (`parent.html`).
+- Mobile-friendly PWA setup (`manifest.webmanifest`, `sw.js`).
+
+### Required setup before using new modules
+1. Run SQL in `supabase_schema_updates.sql` in Supabase SQL Editor.
+2. Create Storage bucket named `notes-files`.
+3. Keep RLS policies enabled for the new tables and notes storage access.
+
+## Refactored Structure (Maintainable Codebase)
+
+```
+ar classes/
+  index.html
+  admin.html
+  faculty.html
+  student.html
+  parent.html
+  assets/
+    css/
+      index.css
+      admin.css
+      faculty.css
+      student.css
+      parent.css
+    js/
+      index.js
+      admin.js
+      faculty.js
+      student.js
+      parent.js
+  sw.js
+  manifest.webmanifest
+  supabase_schema_updates.sql
+```
+
+All page-level inline CSS/JS has been moved to `assets/css` and `assets/js`.
+
+## Basic Functionality Checklist
+
+- Login and role redirect: Admin, Faculty, Student, Parent
+- Student registration and admin approval flow
+- Faculty registration and admin approval flow
+- Student/Faculty credential edit
+- Fee structure setup by class and type
+- Student fee profile update (total/paid/discount/fine)
+- Manual cash payment entry and payment history
+- Faculty attendance marking and student attendance view
+- Notes upload (Supabase Storage) and download for Student/Parent
+- Admin notes monitoring and delete
+- Timetable create/view/delete
+- Exam/Test marks entry and class/student-wise view
+- Parent credentials generation and parent dashboard access
+- PWA install support with offline shell cache
+- Snackbar notifications for success/error/info (replaces plain alerts)

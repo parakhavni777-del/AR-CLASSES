@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR CLASSES - Parent Portal</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/parent.css">
+</head>
+<body>
+<header>
+  <h1><span class="logo">AR</span>Parent Portal</h1>
+  <button id="logoutBtn" class="logout hidden" onclick="logoutParent()">Logout</button>
+</header>
+
+<div class="container">
+  <div id="authCard" class="card">
+    <h2><i class="fas fa-user-shield"></i> Parent Login</h2>
+    <p style="font-size:13px;color:#666;">Use Parent ID and password provided by admin.</p>
+    <input id="parentId" placeholder="Parent ID (e.g., PAR100001)">
+    <input id="parentPass" placeholder="Password" type="password">
+    <button onclick="parentLogin()">Login</button>
+    <button class="secondary" onclick="window.location.href='index.html'">Back to Main Login</button>
+    <p id="loginErr" style="color:#c0392b;font-weight:600;"></p>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <div class="card">
+      <h2><i class="fas fa-child"></i> Student Summary</h2>
+      <div id="studentInfo"></div>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-money-bill-wave"></i> Fee Summary</h2>
+      <div id="feeSummary"></div>
+      <table>
+        <thead><tr><th>Date</th><th>Amount</th><th>Receipt</th><th>Mode</th><th>Note</th></tr></thead>
+        <tbody id="paymentList"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-book"></i> Notes</h2>
+      <table>
+        <thead><tr><th>Title</th><th>Subject</th><th>Date</th><th>Download</th></tr></thead>
+        <tbody id="noteList"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-calendar-check"></i> Attendance</h2>
+      <table>
+        <thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead>
+        <tbody id="attendanceList"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-clock"></i> Timetable</h2>
+      <table>
+        <thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Faculty</th><th>Room</th></tr></thead>
+        <tbody id="timetableList"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2><i class="fas fa-clipboard-check"></i> Exam/Test Marks</h2>
+      <table>
+        <thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Marks</th><th>Remark</th></tr></thead>
+        <tbody id="marksList"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="assets/js/ui.js" defer></script>
+<script src="assets/js/parent.js" defer></script>
+
+</body>
+</html>
+
+
+
+
+

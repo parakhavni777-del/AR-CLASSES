@@ -1,0 +1,20 @@
+{
+  "name": "AR Classes",
+  "short_name": "ARClasses",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e3c72",
+  "icons": [
+    {
+      "src": "logo.jpg.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "logo.jpg.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

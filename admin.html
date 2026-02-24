@@ -4,155 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AR CLASSES - Admin Panel</title>
-<script>
-// Early bootstrap for any stale references before main scripts load.
-window.supbase_url = "https://kgijlxshajimjbqcrygg.supabase.co";
-window.supbase_anon_key = "sb_publishable_1ujAiqxV8MEd0E3SWEIrlQ_EQjM8edG";
-window.SUPABASE_URL = window.supbase_url;
-window.SUPABASE_ANON_KEY = window.supbase_anon_key;
-var supbase_url = window.supbase_url;
-var supbase_anon_key = window.supbase_anon_key;
-</script>
+<link rel="manifest" href="manifest.webmanifest">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #333;
-        min-height: 100vh;
-    }
-    header {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: white;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    header h1 {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        font-size: 28px;
-    }
-    .logo {
-        height: 50px;
-        width: 50px;
-        background: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        font-weight: 700;
-        color: #2a5298;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .section {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    .form-box {
-        background: white;
-        max-width: 1100px;
-        margin: auto;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    th {
-        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-        color: white;
-        padding: 12px;
-        text-align: center;
-        font-weight: 600;
-    }
-    td {
-        border-bottom: 1px solid #e0e0e0;
-        padding: 10px;
-        text-align: center;
-    }
-    tr:hover { background-color: #f8f9ff; }
-    tr:last-child td { border-bottom: none; }
-    button {
-        padding: 8px 14px;
-        margin: 4px;
-        border: none;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 12px;
-    }
-    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-    input, select {
-        padding: 10px;
-        width: 100%;
-        margin-bottom: 10px;
-        border: 2px solid #e0e0e0;
-        border-radius: 6px;
-        font-size: 14px;
-        transition: border-color 0.3s;
-    }
-    input:focus, select:focus { outline: none; border-color: #2a5298; }
-    hr { margin: 30px 0; border: 0; border-top: 2px solid #e0e0e0; }
-    h2 { color: #1e3c72; border-bottom: 3px solid #2a5298; padding-bottom: 10px; margin-bottom: 15px; }
-    h3 { color: #2a5298; }
-    .toggle {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 10px 20px;
-        border: none;
-    }
-    .toggle.active {
-        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-    }
-    button.delete {
-        background: #e74c3c;
-        color: white;
-    }
-    button.update {
-        background: #2a5298;
-        color: white;
-    }
-    button.reject {
-        background: #8e44ad;
-        color: white;
-    }
-    button:not(.toggle):not(.delete):not(.update):not(.reject) {
-        background: #27ae60;
-        color: white;
-    }
-    .card {
-        background: white;
-        padding: 20px;
-        margin: 20px auto;
-        max-width: 1100px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        border-left: 5px solid #2a5298;
-    }
-    @media (max-width: 768px) {
-        header h1 { font-size: 18px; }
-        .logo { height: 35px; width: 35px; }
-        .form-box { padding: 15px; }
-        table { font-size: 12px; }
-        th, td { padding: 6px; }
-        button { padding: 6px 10px; font-size: 11px; }
-        input, select { margin-bottom: 8px; }
-    }
-</style>
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
 
@@ -301,6 +157,92 @@ var supbase_anon_key = window.supbase_anon_key;
 
 </div>
 
+<div class="card">
+<h2>Student Attendance Monitor</h2>
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select id="attendanceClassFilter" onchange="loadAttendanceAdmin()" style="max-width:220px;">
+        <option value="">All Classes</option>
+        <option>4th</option><option>5th</option><option>6th</option><option>7th</option><option>8th</option>
+        <option>9th</option><option>10th</option><option>11th</option><option>12th</option>
+    </select>
+    <input type="date" id="attendanceDateFilter" onchange="loadAttendanceAdmin()" style="max-width:220px;">
+</div>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;">
+<tr><th>Date</th><th>Class</th><th>Student</th><th>Subject</th><th>Status</th><th>Faculty ID</th></tr>
+</thead>
+<tbody id="attendanceAdminList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Student Fee Management (Manual Cash Entries)</h2>
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select id="feeStudentSelect" style="max-width:320px;"></select>
+    <button onclick="prefillStudentFee()" style="max-width:220px;">Load Student Fee Profile</button>
+</div>
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+    <input type="number" id="feeTotalInput" placeholder="Total Fee">
+    <input type="number" id="feePaidInput" placeholder="Paid Fee">
+    <input type="number" id="feeDiscountInput" placeholder="Discount">
+    <input type="number" id="feeFineInput" placeholder="Fine">
+</div>
+<button onclick="saveStudentFeeProfile()">Save Fee Profile</button>
+<hr>
+<h3>Record Cash Payment</h3>
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+    <input type="number" id="paymentAmountInput" placeholder="Amount Paid">
+    <input type="date" id="paymentDateInput">
+    <input type="text" id="paymentReceiptInput" placeholder="Receipt No">
+    <input type="text" id="paymentNoteInput" placeholder="Note (optional)">
+</div>
+<button onclick="recordFeePayment()">Add Payment Entry</button>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Date</th><th>Amount</th><th>Receipt</th><th>Mode</th><th>Note</th></tr></thead>
+<tbody id="adminPaymentList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Timetable Management</h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+    <select id="adminTtClass">
+        <option>4th</option><option>5th</option><option>6th</option><option>7th</option><option>8th</option>
+        <option>9th</option><option>10th</option><option>11th</option><option>12th</option>
+    </select>
+    <select id="adminTtDay">
+        <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option>
+    </select>
+    <input type="time" id="adminTtStart">
+    <input type="time" id="adminTtEnd">
+    <input type="text" id="adminTtSubject" placeholder="Subject">
+    <input type="text" id="adminTtFaculty" placeholder="Faculty Name">
+    <input type="text" id="adminTtRoom" placeholder="Room">
+</div>
+<button onclick="saveAdminTimetable()">Save Timetable Entry</button>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Class</th><th>Day</th><th>Time</th><th>Subject</th><th>Faculty</th><th>Room</th><th>Action</th></tr></thead>
+<tbody id="adminTimetableList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Exam/Test Marks Monitor</h2>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Student</th><th>Class</th><th>Exam</th><th>Subject</th><th>Marks</th><th>Date</th></tr></thead>
+<tbody id="adminMarksList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Parent Login Credentials Management</h2>
+<p style="font-size:13px;color:#555;">Generate/edit Parent ID and password for each student. Parents can login from Parent Portal.</p>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Student</th><th>Class</th><th>Parent ID</th><th>Password</th><th>Action</th></tr></thead>
+<tbody id="parentCredentialsList"></tbody>
+</table>
+</div>
+
 <!-- EDIT CREDENTIALS MODAL -->
 <div id="editCredentialsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center;">
     <div style="background:white; padding:30px; border-radius:12px; max-width:400px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
@@ -325,773 +267,18 @@ var supbase_anon_key = window.supbase_anon_key;
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://kgijlxshajimjbqcrygg.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_1ujAiqxV8MEd0E3SWEIrlQ_EQjM8edG";
-// Backward-compatible aliases for any stale cached references.
-var supbase_url = SUPABASE_URL;
-var supbase_anon_key = SUPABASE_ANON_KEY;
-window.SUPABASE_URL = SUPABASE_URL;
-window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
-window.supbase_url = supbase_url;
-window.supbase_anon_key = supbase_anon_key;
-window.__dbClient = window.__dbClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-window.onerror = function (message, source, lineno, colno) {
-    console.error("RuntimeError:", message, source, lineno, colno);
-};
-</script>
+<script src="assets/js/ui.js" defer></script>
 
 <script>
-
-function getDbClient() {
-    const url =
-        (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL) ||
-        window.SUPABASE_URL ||
-        window.supbase_url ||
-        "https://kgijlxshajimjbqcrygg.supabase.co";
-    const key =
-        (typeof SUPABASE_ANON_KEY !== 'undefined' && SUPABASE_ANON_KEY) ||
-        window.SUPABASE_ANON_KEY ||
-        window.supbase_anon_key ||
-        "sb_publishable_1ujAiqxV8MEd0E3SWEIrlQ_EQjM8edG";
-
-    if (window.__dbClient && typeof window.__dbClient.from === 'function') return window.__dbClient;
-
-    if (window.supabase && typeof window.supabase.createClient === 'function') {
-        try{
-            window.__dbClient = window.supabase.createClient(url, key);
-            return window.__dbClient;
-        }
-        catch (e) {
-            console.error('Error creating Supabase client:', e);
-            throw new Error('Supabase client creation failed');
-        }
-    }
-    throw new Error('Supabase client not initialized');
-}
-
-
-let studentsCache = [];
-let facultyCache = [];
-let feesCache = [];
-let notesCache = [];
-
-async function resolveStudentRowId(student) {
-    if (student && student.row_id) return student.row_id;
-    if (!student) return null;
-    try {
-        const firstName = (student.firstName || student.first_name || '').trim();
-        const lastName = (student.lastName || student.last_name || '').trim();
-        const guardianMobile = (student.guardianMobile || student.guardian_mobile || '').trim();
-        const cls = (student.class || '').trim();
-        if (!firstName || !lastName || !guardianMobile || !cls) return null;
-
-        const { data, error } = await getDbClient()
-            .from('students')
-            .select('id')
-            .eq('first_name', firstName)
-            .eq('last_name', lastName)
-            .eq('guardian_mobile', guardianMobile)
-            .eq('class', cls)
-            .order('created_at', { ascending: false })
-            .limit(1);
-        if (error) return null;
-        const row = (data || [])[0];
-        return row ? row.id : null;
-    } catch (e) {
-        return null;
-    }
-}
-
-async function requireAdminSession() {
-    const localAuth = JSON.parse(localStorage.getItem('adminAuth') || 'null');
-    try {
-        const { data: sessionData } = await getDbClient().auth.getSession();
-        const user = sessionData && sessionData.session ? sessionData.session.user : null;
-        if (!user) return !!(localAuth && localAuth.authenticated);
-
-        const { data: profile } = await getDbClient()
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
-
-        if (profile && profile.role === 'admin') return true;
-        return !!(localAuth && localAuth.authenticated);
-    } catch (e) {
-        return !!(localAuth && localAuth.authenticated);
-    }
-}
-
-async function logoutAdmin() {
-    if(confirm('Are you sure you want to logout?')) {
-        localStorage.removeItem('adminAuth');
-        // Redirect immediately so logout never appears stuck in UI.
-        window.location.href = 'index.html';
-        try {
-            await getDbClient().auth.signOut();
-        } catch (e) {
-            // Ignore signout errors; local logout + redirect already completed.
-        }
-    }
-}
-
-/* ================= TOGGLE LOGIC ================= */
-function showStudents(){
-    document.getElementById('studentBtn').classList.add('active');
-    document.getElementById('facultyBtn').classList.remove('active');
-    
-    // Show Student & Fee Section
-    document.getElementById('studentSection').style.display='block';
-    document.getElementById('feeSection').style.display='block'; 
-    
-    // Hide Faculty Section
-    document.getElementById('facultySection').style.display='none';
-}
-
-function showFaculty(){
-    document.getElementById('facultyBtn').classList.add('active');
-    document.getElementById('studentBtn').classList.remove('active');
-    
-    // Hide Student & Fee Section
-    document.getElementById('studentSection').style.display='none';
-    document.getElementById('feeSection').style.display='none'; 
-    
-    // Show Faculty Section
-    document.getElementById('facultySection').style.display='block';
-}
-
-/* ================= STUDENT LOGIC ================= */
-async function loadStudents(){
-    const { data, error } = await getDbClient().from('students').select('*').order('created_at', { ascending: false });
-    if(error) {
-        alert('Failed to load students: ' + error.message);
-        return;
-    }
-    const students = (data || []).map(s => ({
-        ...s,
-        row_id: s.id,
-        local_index: -1,
-        firstName: s.first_name || '',
-        lastName: s.last_name || '',
-        id: s.student_code || '',
-        password: s.password_legacy || ''
-    }));
-    studentsCache = students;
-    let tbody = document.querySelector('#studentTable tbody');
-    tbody.innerHTML = '';
-
-    students.forEach((s, index) => {
-        let row = document.createElement('tr');
-        let idDisplay = s.id ? `<strong style="color: #2a5298;">${s.id}</strong>` : '<span style="color:#999;">Pending</span>';
-        let passDisplay = s.password ? `<strong style="color: #2a5298;">${s.password}</strong>` : '<span style="color:#999;">Pending</span>';
-        
-        row.innerHTML = `
-            <td>${(s.firstName || '').trim()} ${(s.lastName || '').trim()}</td>
-            <td>${s.class}</td>
-            <td>${(s.subjects||[]).join(', ')}</td>
-            <td>${s.guardian}</td>
-            <td>${s.guardianMobile}</td>
-            <td>${idDisplay}</td>
-            <td>${passDisplay}</td>
-            <td>${s.status}</td>
-            <td>
-                ${s.status === 'pending' ? `
-                <button onclick="approveStudent(${index})">Approve</button>
-                <button class="reject" onclick="rejectStudent(${index})">Reject</button>` : `
-                <button onclick="editStudentCredentials(${index})">Edit ID/Pass</button>`}
-                <button class="delete" onclick="deleteStudent(${index})">Delete</button>
-            </td>`;
-        tbody.appendChild(row);
-    });
-}
-
-async function approveStudent(index){
-    const s = studentsCache[index];
-    if(!s) return;
-    let id = s.id || ('AR' + Math.floor(100000 + Math.random() * 900000));
-    let pass = s.password || ('PASS' + Math.floor(1000 + Math.random() * 9000));
-    const resolvedRowId = await resolveStudentRowId(s);
-    const rowIdToUse = resolvedRowId || s.row_id;
-    if(!rowIdToUse){
-        alert('Failed to approve student: missing student row id');
-        return;
-    }
-    const { error } = await getDbClient()
-        .from('students')
-        .update({ status: 'approved', student_code: id, password_legacy: pass })
-        .eq('id', rowIdToUse);
-    if(error){
-        alert('Failed to approve student: ' + error.message);
-        return;
-    }
-    alert('Student Approved!\nID: ' + id + '\nPassword: ' + pass);
-    await loadStudents();
-}
-
-async function rejectStudent(index){
-    const s = studentsCache[index];
-    if(!s) return;
-    const resolvedRowId = await resolveStudentRowId(s);
-    const rowIdToUse = resolvedRowId || s.row_id;
-    if(!rowIdToUse){
-        alert('Failed to reject student: missing student row id');
-        return;
-    }
-    const { error } = await getDbClient()
-        .from('students')
-        .update({ status: 'rejected' })
-        .eq('id', rowIdToUse);
-    if(error){
-        alert('Failed to reject student: ' + error.message);
-        return;
-    }
-    await loadStudents();
-}
-
-async function deleteStudent(index){
-    if(!confirm("Are you sure?")) return;
-    const s = studentsCache[index];
-    if(!s) return;
-    const resolvedRowId = await resolveStudentRowId(s);
-    const rowIdToUse = resolvedRowId || s.row_id;
-    if(!rowIdToUse){
-        alert('Failed to delete student: missing student row id');
-        return;
-    }
-    const { error } = await getDbClient().from('students').delete().eq('id', rowIdToUse);
-    if(error){
-        alert('Failed to delete student: ' + error.message);
-        return;
-    }
-    await loadStudents();
-}
-
-/* ================= FACULTY LOGIC ================= */
-async function loadFaculty(){
-    const { data, error } = await getDbClient().from('faculty').select('*').order('created_at', { ascending: false });
-    if(error) {
-        alert('Failed to load faculty: ' + error.message);
-        return;
-    }
-    const faculty = (data || []).map(f => ({
-        ...f,
-        row_id: f.id,
-        id: f.faculty_code || '',
-        password: f.password_legacy || ''
-    }));
-    facultyCache = faculty;
-    let tbody = document.querySelector('#facultyTable tbody');
-    tbody.innerHTML = '';
-
-    faculty.forEach((f, index) => {
-        let row = document.createElement('tr');
-        let idDisplay = f.id ? `<strong style="color: #2a5298;">${f.id}</strong>` : '<span style="color:#999;">Pending</span>';
-        let passDisplay = f.password ? `<strong style="color: #2a5298;">${f.password}</strong>` : '<span style="color:#999;">Pending</span>';
-
-        row.innerHTML = `
-            <td>${f.name}</td>
-            <td>${f.qualification}</td>
-            <td>${f.contact}</td>
-            <td>${idDisplay}</td>
-            <td>${passDisplay}</td>
-            <td>${f.status}</td>
-            <td>
-                ${f.status === 'pending' ? `
-                <button onclick="approveFaculty(${index})">Approve</button>
-                <button class="reject" onclick="rejectFaculty(${index})">Reject</button>` : `
-                <button onclick="editFacultyCredentials(${index})">Edit Credentials</button>`}
-                <button class="delete" onclick="deleteFaculty(${index})">Delete</button>
-            </td>`;
-        tbody.appendChild(row);
-    });
-}
-
-async function approveFaculty(index){
-    const f = facultyCache[index];
-    if(!f) return;
-
-    let id = f.id || ('FAC' + Math.floor(100000 + Math.random() * 900000));
-    let pass = f.password || ('FPASS' + Math.floor(1000 + Math.random() * 9000));
-
-    const { error } = await getDbClient()
-        .from('faculty')
-        .update({ status: 'approved', faculty_code: id, password_legacy: pass })
-        .eq('id', f.row_id);
-    if(error){
-        alert('Failed to approve faculty: ' + error.message);
-        return;
-    }
-
-    alert('Faculty Approved!\n\nName: ' + f.name + '\nID: ' + id + '\nPassword: ' + pass);
-    await loadFaculty();
-}
-
-async function rejectFaculty(index){
-    const f = facultyCache[index];
-    if(!f) return;
-    const { error } = await getDbClient()
-        .from('faculty')
-        .update({ status: 'rejected' })
-        .eq('id', f.row_id);
-    if(error){
-        alert('Failed to reject faculty: ' + error.message);
-        return;
-    }
-    await loadFaculty();
-}
-
-async function deleteFaculty(index){
-    if(!confirm("Are you sure?")) return;
-    const f = facultyCache[index];
-    if(!f) return;
-    const { error } = await getDbClient().from('faculty').delete().eq('id', f.row_id);
-    if(error){
-        alert('Failed to delete faculty: ' + error.message);
-        return;
-    }
-    await loadFaculty();
-}
-/* ================= EDIT CREDENTIALS LOGIC ================= */
-let editingType = ''; // 'student' or 'faculty'
-let editingIndex = -1;
-let editingRowId = '';
-
-function editStudentCredentials(index){
-    let student = studentsCache[index];
-    if(!student) return;
-
-    editingType = 'student';
-    editingIndex = index;
-    editingRowId = student.row_id;
-
-    document.getElementById('editModalTitle').textContent = 'Edit Student Credentials';
-    document.getElementById('editName').textContent = (student.firstName || '') + ' ' + (student.lastName || '');
-    document.getElementById('editId').value = student.id || '';
-    document.getElementById('editPassword').value = student.password || '';
-    document.getElementById('editCredentialsModal').style.display = 'flex';
-}
-
-function editFacultyCredentials(index){
-    let fac = facultyCache[index];
-    if(!fac) return;
-
-    editingType = 'faculty';
-    editingIndex = index;
-    editingRowId = fac.row_id;
-
-    document.getElementById('editModalTitle').textContent = 'Edit Faculty Credentials';
-    document.getElementById('editName').textContent = fac.name;
-    document.getElementById('editId').value = fac.id || '';
-    document.getElementById('editPassword').value = fac.password || '';
-    document.getElementById('editCredentialsModal').style.display = 'flex';
-}
-
-async function saveEditedCredentials(){
-    let newId = document.getElementById('editId').value.trim();
-    let newPass = document.getElementById('editPassword').value.trim();
-
-    if(!newId || !newPass){
-        alert('Please enter both ID and Password');
-        return;
-    }
-
-    if(editingType === 'student'){
-        const current = studentsCache[editingIndex];
-        const resolvedRowId = await resolveStudentRowId(current);
-        const rowIdToUse = resolvedRowId || editingRowId;
-        if(!rowIdToUse){
-            alert('Failed to update student credentials: missing student row id');
-            return;
-        }
-        const { error } = await getDbClient()
-            .from('students')
-            .update({ student_code: newId, password_legacy: newPass })
-            .eq('id', rowIdToUse);
-        if(error){
-            alert('Failed to update student credentials: ' + error.message);
-            return;
-        }
-        alert('Student credentials updated successfully!');
-        await loadStudents();
-    } else if(editingType === 'faculty'){
-        const { error } = await getDbClient()
-            .from('faculty')
-            .update({ faculty_code: newId, password_legacy: newPass })
-            .eq('id', editingRowId);
-        if(error){
-            alert('Failed to update faculty credentials: ' + error.message);
-            return;
-        }
-        alert('Faculty credentials updated successfully!');
-        await loadFaculty();
-    }
-
-    closeEditModal();
-}
-
-function closeEditModal(){
-    document.getElementById('editCredentialsModal').style.display = 'none';
-    editingType = '';
-    editingIndex = -1;
-    editingRowId = '';
-    document.getElementById('editId').value = '';
-    document.getElementById('editPassword').value = '';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    let modal = document.getElementById('editCredentialsModal');
-    if(event.target === modal) {
-        modal.style.display = 'none';
-    }
-}
-/* ================= FEE STRUCTURE LOGIC ================= */
-let feeEditId = null;
-function toggleFeeMode(){
-    let cls = document.getElementById('feeClass').value;
-    let monthlyDiv = document.getElementById('monthlyMode');
-    let courseDiv = document.getElementById('courseMode');
-
-    if(['4th','5th','6th','7th','8th'].includes(cls)){
-        monthlyDiv.style.display = 'block';
-        courseDiv.style.display = 'none';
-    } else {
-        monthlyDiv.style.display = 'none';
-        courseDiv.style.display = 'block';
-    }
-}
-
-async function saveFeeStructure(){
-    try {
-        const db = getDbClient();
-        let cls = document.getElementById('feeClass').value;
-        let amount = document.getElementById('feeAmount').value;
-        if(!cls || cls === '-- Choose a class --') { alert('Please select a class'); return; }
-        if(!amount) { alert('Please enter an amount'); return; }
-
-        let type = '';
-        if(['4th','5th','6th','7th','8th'].includes(cls)){
-            type = document.getElementById('feeCombination').value;
-        } else {
-            type = document.getElementById('courseSubject').value.trim();
-            if(!type) { alert('Please enter a subject'); return; }
-        }
-
-        if(feeEditId){
-            const { error } = await db
-                .from('fee_structure')
-                .update({ class: cls, type: type, amount: Number(amount) })
-                .eq('id', feeEditId);
-            if(error){
-                alert('Failed to update fee: ' + error.message);
-                return;
-            }
-            feeEditId = null;
-            document.getElementById('saveFeeBtn').innerHTML = '<i class="fas fa-save"></i> Save Fee Structure';
-            document.getElementById('cancelFeeBtn').style.display = 'none';
-        } else {
-            const { error: insertError } = await db
-                .from('fee_structure')
-                .insert({ class: cls, type: type, amount: Number(amount) });
-
-            if(insertError){
-                // Duplicate row: update existing class/type entry instead.
-                if(insertError.code === '23505'){
-                    const { error: updateDupError } = await db
-                        .from('fee_structure')
-                        .update({ amount: Number(amount) })
-                        .eq('class', cls)
-                        .eq('type', type);
-                    if(updateDupError){
-                        alert('Failed to update existing fee: ' + updateDupError.message);
-                        return;
-                    }
-                } else {
-                    alert('Failed to save fee: ' + insertError.message);
-                    return;
-                }
-            }
-        }
-
-        // Verify saved row exists
-        const { data: checkRows, error: checkError } = await db
-            .from('fee_structure')
-            .select('id')
-            .eq('class', cls)
-            .eq('type', type)
-            .limit(1);
-        if(checkError){
-            alert('Saved but verification failed: ' + checkError.message);
-        } else if(!checkRows || checkRows.length === 0){
-            alert('Save did not persist. Please check table policies.');
-        }
-
-        await loadFees();
-        document.getElementById('feeAmount').value = '';
-        document.getElementById('courseSubject').value = '';
-        document.getElementById('feeClass').value = '-- Choose a class --';
-        toggleFeeMode();
-    } catch (err) {
-        alert('Unexpected fee save error: ' + (err && err.message ? err.message : err));
-    }
-}
-
-async function loadFees(){
-    const db = getDbClient();
-    const { data, error } = await db.from('fee_structure').select('*').order('class').order('type');
-    if(error){
-        alert('Failed to load fees: ' + error.message);
-        return;
-    }
-    let fees = data || [];
-    fees = fees.map(f => ({
-        ...f,
-        row_id: f.id || f.row_id || null
-    }));
-    feesCache = fees;
-
-    let tbody = document.querySelector('#feeTable tbody');
-    tbody.innerHTML = '';
-
-    fees.forEach((f, index) => {
-        let row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${f.class}</td>
-            <td>${f.type}</td>
-            <td>?${f.amount}</td>
-            <td>
-                <button class="update" onclick="editFee(${index})">Edit</button>
-                <button class="delete" onclick="deleteFee(${index})">Delete</button>
-            </td>`;
-        tbody.appendChild(row);
-    });
-}
-
-function editFee(index){
-    let f = feesCache[index];
-    if(!f) return;
-    feeEditId = f.row_id || f.id || null;
-
-    document.getElementById('feeClass').value = f.class || '-- Choose a class --';
-    toggleFeeMode();
-
-    if(['4th','5th','6th','7th','8th'].includes(f.class)){
-        document.getElementById('feeCombination').value = f.type || 'Any1';
-    } else {
-        document.getElementById('courseSubject').value = f.type || '';
-    }
-
-    document.getElementById('feeAmount').value = f.amount || '';
-    document.getElementById('saveFeeBtn').innerHTML = '<i class="fas fa-edit"></i> Update Fee';
-    document.getElementById('cancelFeeBtn').style.display = 'block';
-}
-
-function cancelEditFee(){
-    feeEditId = null;
-    document.getElementById('feeAmount').value = '';
-    document.getElementById('courseSubject').value = '';
-    document.getElementById('feeClass').value = '-- Choose a class --';
-    toggleFeeMode();
-    document.getElementById('saveFeeBtn').innerHTML = '<i class="fas fa-save"></i> Save Fee Structure';
-    document.getElementById('cancelFeeBtn').style.display = 'none';
-}
-
-async function deleteFee(index){
-    let f = feesCache[index];
-    if(!f) return;
-    const db = getDbClient();
-    let error = null;
-    const rowId = f.row_id || f.id || null;
-    if(rowId){
-        ({ error } = await db.from('fee_structure').delete().eq('id', rowId));
-    } else {
-        ({ error } = await db
-            .from('fee_structure')
-            .delete()
-            .match({ class: f.class, type: f.type, amount: Number(f.amount) }));
-    }
-    if(error){
-        alert('Failed to delete fee: ' + error.message);
-        return;
-    }
-    await loadFees();
-}
-
-/* ================= INITIALIZE DEFAULT FEES ================= */
-async function initializeDefaultFees(){
-    const db = getDbClient();
-    const { data: existing, error: checkError } = await db.from('fee_structure').select('id').limit(1);
-    if(checkError){
-        alert('Fee initialization check failed: ' + checkError.message);
-        return;
-    }
-    if(existing && existing.length > 0) return;
-
-    let defaultFees = [
-        {class: '4th', type: 'Any1', amount: 2000},
-        {class: '4th', type: 'Any2', amount: 3500},
-        {class: '4th', type: 'Any3', amount: 4800},
-        {class: '4th', type: 'Any4', amount: 5800},
-        {class: '4th', type: 'All', amount: 6500},
-        {class: '5th', type: 'Any1', amount: 2200},
-        {class: '5th', type: 'Any2', amount: 3800},
-        {class: '5th', type: 'Any3', amount: 5200},
-        {class: '5th', type: 'Any4', amount: 6300},
-        {class: '5th', type: 'All', amount: 7000},
-        {class: '6th', type: 'Any1', amount: 2500},
-        {class: '6th', type: 'Any2', amount: 4200},
-        {class: '6th', type: 'Any3', amount: 5800},
-        {class: '6th', type: 'Any4', amount: 7000},
-        {class: '6th', type: 'All', amount: 7800},
-        {class: '7th', type: 'Any1', amount: 2800},
-        {class: '7th', type: 'Any2', amount: 4600},
-        {class: '7th', type: 'Any3', amount: 6500},
-        {class: '7th', type: 'Any4', amount: 7800},
-        {class: '7th', type: 'All', amount: 8500},
-        {class: '8th', type: 'Any1', amount: 3000},
-        {class: '8th', type: 'Any2', amount: 5000},
-        {class: '8th', type: 'Any3', amount: 7000},
-        {class: '8th', type: 'Any4', amount: 8500},
-        {class: '8th', type: 'All', amount: 9500},
-        {class: '9th', type: 'Maths', amount: 25000},
-        {class: '9th', type: 'Science', amount: 28000},
-        {class: '9th', type: 'English', amount: 20000},
-        {class: '10th', type: 'Maths', amount: 28000},
-        {class: '10th', type: 'Science', amount: 30000},
-        {class: '10th', type: 'English', amount: 22000},
-        {class: '11th', type: 'Accounts', amount: 35000},
-        {class: '11th', type: 'Business Studies', amount: 32000},
-        {class: '11th', type: 'Economics', amount: 30000},
-        {class: '11th', type: 'Maths', amount: 30000},
-        {class: '11th', type: 'Physics', amount: 32000},
-        {class: '11th', type: 'Chemistry', amount: 32000},
-        {class: '12th', type: 'Accounts', amount: 38000},
-        {class: '12th', type: 'Business Studies', amount: 35000},
-        {class: '12th', type: 'Economics', amount: 33000},
-        {class: '12th', type: 'Maths', amount: 33000},
-        {class: '12th', type: 'Physics', amount: 35000},
-        {class: '12th', type: 'Chemistry', amount: 35000}
-    ];
-
-    const { error: seedError } = await db.from('fee_structure').insert(defaultFees);
-    if(seedError){
-        alert('Failed to initialize default fees: ' + seedError.message);
-    }
-}
-
-async function insertTestFees(){
-    const db = getDbClient();
-    const { error: clearError } = await db.from('fee_structure').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-    if(clearError){
-        alert('Failed to clear fees: ' + clearError.message);
-        return;
-    }
-    await initializeDefaultFees();
-    await loadFees();
-    alert('Default test fees inserted successfully.');
-}
-/* ================= NOTES MONTORING LOGIC ================= */
-async function loadAdminNotes(){
-
-let facultyFilter = document.getElementById('filterFaculty').value;
-let classFilter = document.getElementById('filterClass').value;
-let table = document.getElementById('adminNotesList');
-if(!table) return;
-
-const { data, error } = await getDbClient().from('notes').select('*').order('created_at', { ascending: false });
-if(error){
-    alert('Failed to load notes: ' + error.message);
-    return;
-}
-let notes = data || [];
-
-notesCache = notes;
-table.innerHTML = '';
-
-let faculties = [...new Set(notes.map(n => n.faculty_name || n.faculty).filter(Boolean))];
-let facultyDropdown = document.getElementById('filterFaculty');
-facultyDropdown.innerHTML = `<option value="">All Faculty</option>`;
-faculties.forEach(f => {
-    facultyDropdown.innerHTML += `<option value="${f}">${f}</option>`;
-});
-
-if(facultyFilter){
-    notes = notes.filter(n => (n.faculty_name || n.faculty) === facultyFilter);
-}
-
-if(classFilter){
-    notes = notes.filter(n => parseInt(n.class, 10) === parseInt(classFilter, 10));
-}
-
-if(notes.length === 0){
-    table.innerHTML = `
-<tr>
-<td colspan="7" style="text-align:center;">No uploads found</td>
-</tr>`;
-    return;
-}
-
-notes.forEach((note, index) => {
-    const previewUrl = note.file_url || note.fileData || '';
-    const showDate = note.created_at ? new Date(note.created_at).toLocaleDateString() : (note.date || '-');
-    const facultyName = note.faculty_name || note.faculty || '-';
-
-    table.innerHTML += `
-<tr>
-<td>${facultyName}</td>
-<td>${note.title || '-'}</td>
-<td>${note.subject || '-'}</td>
-<td>${note.class || '-'}</td>
-<td>${showDate}</td>
-<td><button onclick="previewFile('${previewUrl}')">Preview</button></td>
-<td><button onclick="adminDeleteNote(${index})">Delete</button></td>
-</tr>`;
-});
-
-}
-
-function previewFile(fileData){
-window.open(fileData, '_blank');
-}
-
-async function adminDeleteNote(index){
-const note = notesCache[index];
-if(!note) return;
-
-if(confirm('Are you sure you want to delete this file?')){
-    const { error } = await getDbClient().from('notes').delete().eq('id', note.id);
-    if(error){
-        alert('Failed to delete note: ' + error.message);
-        return;
-    }
-    await loadAdminNotes();
-}
-
-}
-
-window.addEventListener('load', async function(){
-    const isAdmin = await requireAdminSession();
-    if(!isAdmin){
-        localStorage.removeItem('adminAuth');
-        window.location.href = 'index.html';
-        return;
-    }
-
-    localStorage.setItem('adminAuth', JSON.stringify({ authenticated: true }));
-    await initializeDefaultFees();
-    await loadStudents();
-    await loadFaculty();
-    await loadFees();
-    toggleFeeMode();
-    await loadAdminNotes();
-    showStudents();
-});
-
+console.log('[ADMIN PAGE] HTML loaded', location.href);
 </script>
+<script src="assets/js/admin.js" defer onerror="console.error('[ADMIN PAGE] failed to load assets/js/admin.js'); alert('Admin script failed to load. Do hard refresh (Ctrl+Shift+R) and clear site data.');"></script>
 
 </body>
 </html>
+
+
+
 
 
