@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR CLASSES - Faculty Panel</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/faculty.css">
+</head>
+<body>
+
+<header>
+<h1><div class="logo">AR</div> AR CLASSES - Faculty Panel</h1>
+</header>
+
+<div class="section">
+
+<!-- AUTH SECTION -->
+<div class="form-box" id="authSection">
+
+<div style="text-align:center;">
+<button class="toggle active" id="registerBtn" onclick="showRegister()"><i class="fas fa-user-plus"></i> New Registration</button>
+<button class="toggle" id="loginBtn" onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Login</button>
+</div>
+
+<!-- REGISTRATION -->
+<div id="registerSection">
+
+<h2><i class="fas fa-clipboard-list"></i> Faculty Registration</h2>
+
+<div class="form-box">
+    <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="name" placeholder="Enter your full name" required>
+    </div>
+
+    <div class="form-group">
+        <label>Qualification *</label>
+        <input type="text" id="qualification" placeholder="e.g., B.Tech CSE, M.A English" required>
+    </div>
+
+    <div class="form-group">
+        <label>Contact Number *</label>
+        <input type="tel" id="contact" placeholder="10-digit contact number" maxlength="10" required
+        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+    </div>
+
+    <!-- SUBJECTS SELECTION -->
+    <div class="form-group">
+        <label>Select Subjects <span style="font-size:12px; color:#999;">(Select one and click Add)</span></label>
+        <select id="subjects" style="border: 2px solid #2a5298; padding: 8px; border-radius: 6px;">
+            <option value="">-- Select a subject --</option>
+            <option value="English">English</option>
+            <option value="Maths">Maths</option>
+            <option value="Science">Science</option>
+            <option value="Social Studies">Social Studies</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Sanskrit">Sanskrit</option>
+            <option value="Accounts">Accounts</option>
+            <option value="Business Studies">Business Studies</option>
+            <option value="Economics">Economics</option>
+        </select>
+        <button class="action-btn" type="button" onclick="addSubject()" style="margin-top: 8px; background: #2a5298; color: white; padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; width: 100%;">
+            <i class="fas fa-plus"></i> Add Subject
+        </button>
+    </div>
+
+    <!-- CLASSES SELECTION -->
+    <div class="form-group">
+        <label>Select Classes <span style="font-size:12px; color:#999;">(Select one and click Add)</span></label>
+        <select id="classes" style="border: 2px solid #2a5298; padding: 8px; border-radius: 6px;">
+            <option value="">-- Select a class --</option>
+            <option value="4th">4th</option><option value="5th">5th</option><option value="6th">6th</option>
+            <option value="7th">7th</option><option value="8th">8th</option>
+            <option value="9th">9th</option><option value="10th">10th</option>
+            <option value="11th">11th</option><option value="12th">12th</option>
+        </select>
+        <button class="action-btn" type="button" onclick="addClass()" style="margin-top: 8px; background: #2a5298; color: white; padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; width: 100%;">
+            <i class="fas fa-plus"></i> Add Class
+        </button>
+    </div>
+
+    <!-- SELECTED ITEMS REVIEW -->
+    <div style="margin-top: 25px; padding: 15px; background: #f8f9ff; border-radius: 8px;">
+        <h3 style="color: #1e3c72; margin-bottom: 15px;"><i class="fas fa-check-circle"></i> Selected Items Review</h3>
+        
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: #2a5298; margin-bottom: 10px;">Subjects:</h4>
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px;">
+                <thead style="background: #2a5298; color: white;">
+                    <tr>
+                        <th style="padding: 10px; text-align: left;">Subject</th>
+                        <th style="padding: 10px; text-align: center; width: 80px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="selectedSubjectsTable">
+                    <tr><td colspan="2" style="padding: 10px; text-align: center; color: #999;">No subjects added yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <h4 style="color: #2a5298; margin-bottom: 10px;">Classes:</h4>
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 6px;">
+                <thead style="background: #2a5298; color: white;">
+                    <tr>
+                        <th style="padding: 10px; text-align: left;">Class</th>
+                        <th style="padding: 10px; text-align: center; width: 80px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="selectedClassesTable">
+                    <tr><td colspan="2" style="padding: 10px; text-align: center; color: #999;">No classes added yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+    <button id="registerFacultyBtn" type="button" onclick="registerFaculty()" style="margin-top: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 25px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%;">
+        <i class="fas fa-check"></i> Complete Registration
+    </button>
+    
+    <button type="button" onclick="location.href='index.html'" style="margin-top: 10px; background: #999; color: white; padding: 12px 25px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%;">
+        <i class="fas fa-arrow-left"></i> Back to Login
+    </button>
+</div>
+
+</div>
+
+<!-- LOGIN -->
+<div id="loginSection" style="display:none;">
+
+<h2><i class="fas fa-lock"></i> Faculty Login</h2>
+<input type="text" id="loginFacId" placeholder="Faculty ID (e.g., FAC1001)">
+<input type="password" id="loginFacPass" placeholder="Password">
+<button id="facultyLoginBtn" onclick="facultyLogin()">Login</button>
+<div id="facultyLoginError" style="color:#e74c3c; font-size:13px; margin-top:10px;"></div>
+
+</div>
+
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboardSection" style="display:none;">
+<div class="dashboard-box">
+
+<h2><i class="fas fa-tachometer-alt"></i> <span id="welcomeMsg">Faculty Dashboard</span></h2>
+<button onclick="logoutFaculty()" style="float:right;background:#e74c3c;color:white;border:none;padding:10px 15px;border-radius:6px;cursor:pointer;font-weight:600;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+<div style="clear:both;"></div>
+
+<!-- Change Credentials Card -->
+<div class="card">
+<h3><i class="fas fa-key"></i> Change Login Credentials</h3>
+<div style="background:#f0f8ff; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px; color:#2a5298;">
+    <strong>📋 Your Credentials:</strong><br>
+    Faculty ID: <span id="displayFacId" style="font-weight:bold; color:#e74c3c;">Loading...</span><br>
+    Password: <span id="displayFacPass" style="font-weight:bold; color:#e74c3c;">Loading...</span>
+</div>
+
+<div class="form-group">
+    <label><strong>New Faculty ID</strong></label>
+    <input type="text" id="newFacId" placeholder="Enter new Faculty ID (e.g., FAC-001)">
+</div>
+
+<div class="form-group">
+    <label><strong>New Password</strong></label>
+    <input type="text" id="newFacPass" placeholder="Enter new password">
+</div>
+
+<button id="changeCredBtn" onclick="changeCredentials()" style="width:100%; background:linear-gradient(135deg, #27ae60 0%, #229954 100%); color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">
+    <i class="fas fa-save"></i> Save New Credentials
+</button>
+</div>
+<!-- Attendance -->
+<div class="card">
+<h3><i class="fas fa-calendar-check"></i> Mark Attendance</h3>
+
+<input type="date" id="attDate">
+
+<label>Select Class</label>
+<select id="attClass" onchange="loadStudentsForAttendance()">
+<option value="">Select Class</option>
+</select>
+
+<div id="studentList"></div>
+
+<button id="saveAttendanceBtn" onclick="saveAttendance()">Save Attendance</button>
+</div>
+
+<!-- Upload Notes Section -->
+<div class="card">
+<h3><i class="fas fa-book"></i> Upload Notes / Worksheets</h3>
+
+<input type="text" id="noteTitle" placeholder="Enter Title">
+<label>Select Subject</label>
+<select id="noteSubject">
+<option>Maths</option>
+<option>Science</option>
+<option>English</option>
+<option>Social Studies</option>
+<option>Hindi</option>
+<option>Accounts</option>
+<option>Business Studies</option>
+<option>Economics</option>
+</select>
+
+<label>Select Class</label>
+<select id="noteClass"></select>
+
+<label>Attach File (PDF / Image / Word)</label>
+<input type="file" id="noteFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.xls,.xlsx,image/*">
+
+<button id="uploadNoteBtn" onclick="uploadNote()">Upload</button>
+
+<hr>
+<h3>Your Uploaded Files</h3>
+
+<table border="1" width="100%" cellpadding="8"
+style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;">
+<tr>
+<th>Title</th>
+<th>Subject</th>
+<th>Class</th>
+<th>Date</th>
+<th>File</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="notesList"></tbody>
+</table>
+
+
+</div>
+
+<div class="card">
+<h3><i class="fas fa-clock"></i> Timetable Management</h3>
+<label>Class</label>
+<select id="ttClass"></select>
+<label>Day</label>
+<select id="ttDay">
+<option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option>
+</select>
+<label>Start Time</label>
+<input type="time" id="ttStart">
+<label>End Time</label>
+<input type="time" id="ttEnd">
+<label>Subject</label>
+<input type="text" id="ttSubject" placeholder="e.g., Maths">
+<label>Room</label>
+<input type="text" id="ttRoom" placeholder="e.g., Room 2">
+<button id="saveTimetableBtn" onclick="saveTimetableEntry()">Save Timetable Entry</button>
+</div>
+
+<div class="card">
+<h3><i class="fas fa-clipboard-check"></i> Exam/Test Marks Entry</h3>
+<label>Class</label>
+<select id="marksClass" onchange="loadStudentsForMarks()"></select>
+<label>Student</label>
+<select id="marksStudent"></select>
+<label>Subject</label>
+<input type="text" id="marksSubject" placeholder="e.g., Science">
+<label>Exam/Test Name</label>
+<input type="text" id="marksExamName" placeholder="e.g., Unit Test 1">
+<label>Exam Date</label>
+<input type="date" id="marksDate">
+<label>Max Marks</label>
+<input type="number" id="marksMax" placeholder="e.g., 100">
+<label>Marks Obtained</label>
+<input type="number" id="marksObtained" placeholder="e.g., 84">
+<label>Remarks</label>
+<input type="text" id="marksRemarks" placeholder="Optional">
+<button id="saveMarksBtn" onclick="saveExamMarks()">Save Marks</button>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="assets/js/ui.js" defer></script>
+
+
+
+<script src="assets/js/faculty.js" defer></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR CLASSES - Admin Panel</title>
+<link rel="manifest" href="manifest.webmanifest">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+<header>
+    <h1><div class="logo">AR</div> AR CLASSES - Admin Panel</h1>
+    <button onclick="logoutAdmin()" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:#e74c3c;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:600;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+</header>
+
+<div class="section">
+    <div class="form-box">
+        
+        <div style="text-align:center;margin-bottom:20px;">
+            <button class="toggle active" id="studentBtn" onclick="showStudents()"><i class="fas fa-user-graduate"></i> View Students</button>
+            <button class="toggle" id="facultyBtn" onclick="showFaculty()"><i class="fas fa-chalkboard-user"></i> View Faculty</button>
+        </div>
+
+        <div id="studentSection" style="display:block;">
+            <h2><i class="fas fa-list"></i> Pending Student Approvals</h2>
+            <table id="studentTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Subjects</th>
+                        <th>Guardian</th>
+                        <th>Mobile</th>
+                        <th>Student ID</th>
+                        <th>Password</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="facultySection" style="display:none;">
+            <h2><i class="fas fa-chalkboard"></i> Faculty Approvals</h2>
+            <table id="facultyTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Qualification</th>
+                        <th>Contact</th>
+                        <th>Faculty ID</th>
+                        <th>Password</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="feeSection" style="display:block;">
+            <hr>
+            <h2><i class="fas fa-money-bill-wave"></i> Fee Structure Management</h2>
+            <p style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; color: #856404;">
+                <strong>💡 Fee System:</strong> Classes 4th-8th charge monthly fees (April-March = 12 months). Classes 9th-12th charge yearly course fees per subject.
+            </p>
+            
+            <label><strong>Select Class</strong></label>
+            <select id="feeClass" onchange="toggleFeeMode()">
+                <option>-- Choose a class --</option>
+                <option>4th</option><option>5th</option><option>6th</option><option>7th</option>
+                <option>8th</option><option>9th</option><option>10th</option>
+                <option>11th</option><option>12th</option>
+            </select>
+
+            <div id="monthlyMode">
+                <label><strong>Subject Combination (4th-8th Monthly Fees)</strong></label>
+                <select id="feeCombination">
+                    <option value="Any1">Any 1 Subject</option>
+                    <option value="Any2">Any 2 Subjects</option>
+                    <option value="Any3">Any 3 Subjects</option>
+                    <option value="Any4">Any 4 Subjects</option>
+                    <option value="All">All Subjects</option>
+                </select>
+            </div>
+
+            <div id="courseMode" style="display:none;">
+                <label><strong>Subject (9th-12th Yearly Fees)</strong></label>
+                <input id="courseSubject" placeholder="e.g., Maths, Physics, Chemistry, Economics">
+            </div>
+
+            <label><strong>Fee Amount (₹)</strong></label>
+            <input type="number" id="feeAmount" placeholder="Enter amount">
+
+            <button id="saveFeeBtn" onclick="saveFeeStructure()" style="background: #27ae60; color: white; width: 100%; padding: 12px; margin-top: 10px;">
+                <i class="fas fa-save"></i> Save Fee Structure
+            </button>
+            <button id="cancelFeeBtn" onclick="cancelEditFee()" style="display:none; background:#95a5a6; color:white; width:100%; padding:12px; margin-top:8px;">Cancel Edit</button>
+      
+            <h3 style="margin-top: 25px;">Current Fee Structure</h3>
+            <table id="feeTable">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Type / Subject</th>
+                        <th>Fee (₹)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div class="card">
+<h2>Faculty Uploaded Notes Monitoring</h2>
+
+<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+    <select id="filterFaculty" onchange="loadAdminNotes()" style="max-width:260px;">
+        <option value="">All Faculty</option>
+    </select>
+    <select id="filterClass" onchange="loadAdminNotes()" style="max-width:220px;">
+        <option value="">All Classes</option>
+        <option>4th</option>
+        <option>5th</option>
+        <option>6th</option>
+        <option>7th</option>
+        <option>8th</option>
+        <option>9th</option>
+        <option>10th</option>
+        <option>11th</option>
+        <option>12th</option>
+    </select>
+</div>
+
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;">
+<tr>
+<th>Faculty</th>
+<th>Title</th>
+<th>Subject</th>
+<th>Class</th>
+<th>Date</th>
+<th>Preview</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="adminNotesList"></tbody>
+</table>
+
+</div>
+
+<div class="card">
+<h2>Student Attendance Monitor</h2>
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select id="attendanceClassFilter" onchange="loadAttendanceAdmin()" style="max-width:220px;">
+        <option value="">All Classes</option>
+        <option>4th</option><option>5th</option><option>6th</option><option>7th</option><option>8th</option>
+        <option>9th</option><option>10th</option><option>11th</option><option>12th</option>
+    </select>
+    <input type="date" id="attendanceDateFilter" onchange="loadAttendanceAdmin()" style="max-width:220px;">
+</div>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;">
+<tr><th>Date</th><th>Class</th><th>Student</th><th>Subject</th><th>Status</th><th>Faculty ID</th></tr>
+</thead>
+<tbody id="attendanceAdminList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Student Fee Management (Manual Cash Entries)</h2>
+<div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select id="feeStudentSelect" style="max-width:320px;"></select>
+    <button onclick="prefillStudentFee()" style="max-width:220px;">Load Student Fee Profile</button>
+</div>
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+    <input type="number" id="feeTotalInput" placeholder="Total Fee">
+    <input type="number" id="feePaidInput" placeholder="Paid Fee">
+    <input type="number" id="feeDiscountInput" placeholder="Discount">
+    <input type="number" id="feeFineInput" placeholder="Fine">
+</div>
+<button id="saveFeeProfileBtn" onclick="saveStudentFeeProfile()">Save Fee Profile</button>
+<hr>
+<h3>Record Cash Payment</h3>
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+    <input type="number" id="paymentAmountInput" placeholder="Amount Paid">
+    <input type="date" id="paymentDateInput">
+    <input type="text" id="paymentReceiptInput" placeholder="Receipt No">
+    <input type="text" id="paymentNoteInput" placeholder="Note (optional)">
+</div>
+<button id="recordPaymentBtn" onclick="recordFeePayment()">Add Payment Entry</button>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Date</th><th>Amount</th><th>Receipt</th><th>Mode</th><th>Note</th></tr></thead>
+<tbody id="adminPaymentList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Timetable Management</h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+    <select id="adminTtClass">
+        <option>4th</option><option>5th</option><option>6th</option><option>7th</option><option>8th</option>
+        <option>9th</option><option>10th</option><option>11th</option><option>12th</option>
+    </select>
+    <select id="adminTtDay">
+        <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option>
+    </select>
+    <input type="time" id="adminTtStart">
+    <input type="time" id="adminTtEnd">
+    <input type="text" id="adminTtSubject" placeholder="Subject">
+    <input type="text" id="adminTtFaculty" placeholder="Faculty Name">
+    <input type="text" id="adminTtRoom" placeholder="Room">
+</div>
+<button id="saveAdminTtBtn" onclick="saveAdminTimetable()">Save Timetable Entry</button>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Class</th><th>Day</th><th>Time</th><th>Subject</th><th>Faculty</th><th>Room</th><th>Action</th></tr></thead>
+<tbody id="adminTimetableList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Exam/Test Marks Monitor</h2>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Student</th><th>Class</th><th>Exam</th><th>Subject</th><th>Marks</th><th>Date</th></tr></thead>
+<tbody id="adminMarksList"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>Parent Login Credentials Management</h2>
+<p style="font-size:13px;color:#555;">Generate/edit Parent ID and password for each student. Parents can login from Parent Portal.</p>
+<table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
+<thead style="background:#dfe6e9;"><tr><th>Student</th><th>Class</th><th>Parent ID</th><th>Password</th><th>Action</th></tr></thead>
+<tbody id="parentCredentialsList"></tbody>
+</table>
+</div>
+
+<!-- EDIT CREDENTIALS MODAL -->
+<div id="editCredentialsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:12px; max-width:400px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+        <h2 id="editModalTitle">Edit Credentials</h2>
+        <div class="form-group">
+            <label><strong>Name</strong></label>
+            <p id="editName" style="padding:10px; background:#f5f5f5; border-radius:6px;"></p>
+        </div>
+        <div class="form-group">
+            <label><strong>New ID</strong></label>
+            <input type="text" id="editId" placeholder="Enter new ID">
+        </div>
+        <div class="form-group">
+            <label><strong>New Password</strong></label>
+            <input type="text" id="editPassword" placeholder="Enter new password">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button onclick="saveEditedCredentials()" style="flex:1; background:#27ae60; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Save</button>
+            <button onclick="closeEditModal()" style="flex:1; background:#95a5a6; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="assets/js/ui.js" defer></script>
+
+<script>
+console.log('[ADMIN PAGE] HTML loaded', location.href);
+</script>
+<script src="assets/js/admin.js" defer onerror="console.error('[ADMIN PAGE] failed to load assets/js/admin.js'); alert('Admin script failed to load. Do hard refresh (Ctrl+Shift+R) and clear site data.');"></script>
+
+</body>
+</html>
+
+
+
+
+

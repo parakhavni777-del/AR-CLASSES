@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR CLASSES - Student Panel</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="assets/css/ui.css">
+<link rel="stylesheet" href="assets/css/student.css">
+</head>
+<body>
+
+<header>
+    <h1><div class="logo">AR</div> AR CLASSES - Student Panel</h1>
+    <button id="logoutBtn" class="logout-btn hidden" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+</header>
+
+<div class="container" id="authBox">
+    <div id="welcomeButtons">
+        <button class="action-btn" onclick="showRegister()"><i class="fas fa-user-plus"></i> New Registration</button>
+        <button class="primary-btn" onclick="showLogin()"><i class="fas fa-sign-in-alt"></i> Already Registered Login</button>
+    </div>
+
+    <div id="registerSection" class="hidden">
+        <h3><i class="fas fa-clipboard-list"></i> Student Registration</h3>
+        <form onsubmit="registerStudent(event)">
+            <label>First Name *</label>
+            <input type="text" id="firstName" pattern="[A-Za-z]+" required>
+
+            <label>Surname *</label>
+            <input type="text" id="lastName" pattern="[A-Za-z]+" required>
+
+            <label>School Name *</label>
+            <input type="text" id="school" required>
+
+            <label>Guardian Name *</label>
+            <input type="text" id="guardian" required>
+
+            <label>Guardian Mobile *</label>
+            <input type="text" id="guardianMobile" pattern="[0-9]{10}" maxlength="10" required>
+
+            <label>Class *</label>
+            <select id="class" onchange="updateSubjects()" required>
+                <option value="">Select Class</option>
+                <option>4th</option><option>5th</option><option>6th</option>
+                <option>7th</option><option>8th</option>
+                <option>9th</option><option>10th</option>
+                <option>11th</option><option>12th</option>
+            </select>
+
+            <label>Select Subject</label>
+            <select id="subjectDropdown" onchange="addSubject()"></select>
+
+            <table>
+                <thead>
+                    <tr><th>Selected Subjects</th><th>Remove</th></tr>
+                </thead>
+                <tbody id="subjectTable"></tbody>
+            </table>
+
+            <label id="feeLabel">Monthly Fee (Apr-Mar)</label>
+            <div style="background: #f0f8ff; padding: 12px; border-radius: 6px; border-left: 4px solid #2a5298; margin-bottom: 12px;">
+                <p style="margin: 0; font-size: 13px; color: #666;">
+                    <strong id="feeInfo">Classes 4th-8th:</strong> Monthly fee based on subject combination <br>
+                    <strong>Classes 9th-12th:</strong> Yearly course fee per subject
+                </p>
+            </div>
+            <input type="number" id="monthlyFee" readonly>
+
+            <p id="feeWarning" class="hidden" style="color:#c0392b; margin:8px 0 0; font-weight:600;"></p>
+
+            <button class="primary-btn" type="submit">Register</button>
+            <button type="button" onclick="location.reload()">Back</button>
+        </form>
+    </div>
+
+    <div id="loginSection" class="hidden">
+        <h3><i class="fas fa-lock"></i> Student Login</h3>
+        <input type="text" id="loginId" placeholder="Student ID">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button class="primary-btn" onclick="loginStudent()">Login</button>
+        <button type="button" onclick="location.reload()">Back</button>
+    </div>
+</div>
+
+<div id="studentDashboard" class="hidden">
+    <div class="card">
+        <h2><i class="fas fa-book"></i> My Notes & Worksheets</h2>
+        <select id="studentSubjectFilter" onchange="loadStudentNotes()">
+            <option value="">All Subjects</option>
+        </select>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody id="studentNotesList"></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-calendar-check"></i> My Attendance</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="studentAttendanceList"></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-money-bill-wave"></i> My Fee Status</h2>
+        <div id="studentFeeSummary"></div>
+        <table>
+            <thead><tr><th>Date</th><th>Amount Paid</th><th>Receipt</th><th>Mode</th><th>Note</th></tr></thead>
+            <tbody id="studentPaymentList"></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-clock"></i> Class Timetable</h2>
+        <table>
+            <thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Faculty</th><th>Room</th></tr></thead>
+            <tbody id="studentTimetableList"></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-clipboard-check"></i> Exam/Test Marks</h2>
+        <table>
+            <thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Marks</th><th>Remarks</th></tr></thead>
+            <tbody id="studentMarksList"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="assets/js/ui.js" defer></script>
+
+
+
+<script src="assets/js/student.js" defer></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
