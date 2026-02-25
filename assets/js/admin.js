@@ -177,6 +177,8 @@ function showFaculty(){
 /* ================= STUDENT LOGIC ================= */
 async function loadStudents(){
     adminLog('loadStudents() called');
+    let tbody = document.querySelector('#studentTable tbody');
+    setTableLoading(tbody, 'Loading students...', 9);
     const { data, error } = await getDbClient().from('students').select('*').order('created_at', { ascending: false });
     adminLog('students query result', { error: error ? error.message : null, rows: (data || []).length, raw: data });
     if(error) {
@@ -196,7 +198,6 @@ async function loadStudents(){
     }));
     adminLog('mapped students', students);
     studentsCache = students;
-    let tbody = document.querySelector('#studentTable tbody');
     adminLog('student tbody exists?', !!tbody);
     if(!tbody){
         console.error('[ADMIN DEBUG] #studentTable tbody not found in DOM');
@@ -295,6 +296,8 @@ async function deleteStudent(index){
 
 /* ================= FACULTY LOGIC ================= */
 async function loadFaculty(){
+    let tbody = document.querySelector('#facultyTable tbody');
+    setTableLoading(tbody, 'Loading faculty...', 7);
     const { data, error } = await getDbClient().from('faculty').select('*').order('created_at', { ascending: false });
     if(error) {
         alert('Failed to load faculty: ' + error.message);
@@ -307,7 +310,6 @@ async function loadFaculty(){
         password: f.password_legacy || ''
     }));
     facultyCache = faculty;
-    let tbody = document.querySelector('#facultyTable tbody');
     tbody.innerHTML = '';
 
     faculty.forEach((f, index) => {
@@ -489,6 +491,8 @@ function toggleFeeMode(){
 }
 
 async function saveFeeStructure(){
+    const saveBtn = document.getElementById('saveFeeBtn');
+    await withButtonLoading(saveBtn, 'Saving fee...', async () => {
     try {
         const db = getDbClient();
         let cls = document.getElementById('feeClass').value;
@@ -561,10 +565,13 @@ async function saveFeeStructure(){
     } catch (err) {
         alert('Unexpected fee save error: ' + (err && err.message ? err.message : err));
     }
+    });
 }
 
 async function loadFees(){
     const db = getDbClient();
+    let tbody = document.querySelector('#feeTable tbody');
+    setTableLoading(tbody, 'Loading fee structure...', 4);
     const { data, error } = await db.from('fee_structure').select('*').order('class').order('type');
     if(error){
         alert('Failed to load fees: ' + error.message);
@@ -577,7 +584,6 @@ async function loadFees(){
     }));
     feesCache = fees;
 
-    let tbody = document.querySelector('#feeTable tbody');
     tbody.innerHTML = '';
 
     fees.forEach((f, index) => {
@@ -737,6 +743,7 @@ let facultyFilter = document.getElementById('filterFaculty').value;
 let classFilter = document.getElementById('filterClass').value;
 let table = document.getElementById('adminNotesList');
 if(!table) return;
+setTableLoading(table, 'Loading uploaded notes...', 7);
 
 const { data, error } = await getDbClient().from('notes').select('*').order('created_at', { ascending: false });
 if(error){
@@ -834,7 +841,7 @@ async function loadAttendanceAdmin(){
     const classFilter = document.getElementById('attendanceClassFilter').value;
     const dateFilter = document.getElementById('attendanceDateFilter').value;
     const tbody = document.getElementById('attendanceAdminList');
-    tbody.innerHTML = '';
+    setTableLoading(tbody, 'Loading attendance...', 6);
 
     const { data, error } = await getDbClient().from('attendance').select('*').order('date', { ascending: false });
     if(error){
@@ -896,6 +903,8 @@ function prefillStudentFee(){
 }
 
 async function saveStudentFeeProfile(){
+    const saveBtn = document.getElementById('saveFeeProfileBtn');
+    await withButtonLoading(saveBtn, 'Saving profile...', async () => {
     if(!selectedFeeStudent){
         alert('Select a student first');
         return;
@@ -915,11 +924,12 @@ async function saveStudentFeeProfile(){
     alert('Fee profile saved');
     await loadStudents();
     loadFeeStudentDropdown();
+    });
 }
 
 async function loadStudentPaymentsAdmin(){
     const tbody = document.getElementById('adminPaymentList');
-    tbody.innerHTML = '';
+    setTableLoading(tbody, 'Loading payments...', 5);
     if(!selectedFeeStudent) return;
     const { data, error } = await getDbClient()
         .from('fee_payments')
@@ -945,6 +955,8 @@ async function loadStudentPaymentsAdmin(){
 }
 
 async function recordFeePayment(){
+    const saveBtn = document.getElementById('recordPaymentBtn');
+    await withButtonLoading(saveBtn, 'Recording payment...', async () => {
     if(!selectedFeeStudent){ alert('Select a student first'); return; }
     const amount = Number(document.getElementById('paymentAmountInput').value || 0);
     const paymentDate = document.getElementById('paymentDateInput').value;
@@ -970,9 +982,12 @@ async function recordFeePayment(){
     document.getElementById('paymentAmountInput').value = '';
     document.getElementById('paymentReceiptInput').value = '';
     document.getElementById('paymentNoteInput').value = '';
+    });
 }
 
 async function saveAdminTimetable(){
+    const saveBtn = document.getElementById('saveAdminTtBtn');
+    await withButtonLoading(saveBtn, 'Saving timetable...', async () => {
     const cls = document.getElementById('adminTtClass').value;
     const day = document.getElementById('adminTtDay').value;
     const start = document.getElementById('adminTtStart').value;
@@ -999,11 +1014,12 @@ async function saveAdminTimetable(){
     document.getElementById('adminTtFaculty').value = '';
     document.getElementById('adminTtRoom').value = '';
     await loadAdminTimetable();
+    });
 }
 
 async function loadAdminTimetable(){
     const tbody = document.getElementById('adminTimetableList');
-    tbody.innerHTML = '';
+    setTableLoading(tbody, 'Loading timetable...', 7);
     const { data, error } = await getDbClient().from('timetables').select('*').order('class').order('day_of_week').order('start_time');
     if(error){
         tbody.innerHTML = '<tr><td colspan=\"7\">Failed to load timetable</td></tr>';
@@ -1036,7 +1052,7 @@ async function deleteAdminTimetable(index){
 
 async function loadAdminMarks(){
     const tbody = document.getElementById('adminMarksList');
-    tbody.innerHTML = '';
+    setTableLoading(tbody, 'Loading marks...', 6);
     const { data, error } = await getDbClient().from('exam_marks').select('*').order('exam_date', { ascending: false });
     if(error){
         tbody.innerHTML = '<tr><td colspan=\"6\">Failed to load marks</td></tr>';

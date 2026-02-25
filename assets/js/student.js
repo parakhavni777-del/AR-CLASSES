@@ -243,6 +243,7 @@ async function calculateFee(){
 // --- CORE REGISTRATION ---
 async function registerStudent(e){
     if(e && typeof e.preventDefault === 'function') e.preventDefault();
+    const submitBtn = document.querySelector('#registerSection button[type="submit"]');
 
     const feeValue = Number(document.getElementById("monthlyFee").value || 0);
     if(!document.getElementById("class").value || selectedSubjects.length === 0){
@@ -271,64 +272,69 @@ async function registerStudent(e){
         status: "pending"
     };
 
-    const { error } = await getDbClient().from('students').insert(payload);
-    if(error){
-        alert('Registration failed: ' + error.message);
-        return;
-    }
+    await withButtonLoading(submitBtn, 'Registering...', async () => {
+        const { error } = await getDbClient().from('students').insert(payload);
+        if(error){
+            alert('Registration failed: ' + error.message);
+            return;
+        }
 
-    alert("Registration Submitted. Wait for Admin Approval. Admin will assign your Student ID and Password.");
-    location.reload();
+        alert("Registration Submitted. Wait for Admin Approval. Admin will assign your Student ID and Password.");
+        location.reload();
+    });
 }
 
 // --- LOGIN ---
 async function loginStudent(){
     let id = document.getElementById("loginId").value.trim();
     let pass = document.getElementById("loginPass").value;
+    const loginBtn = document.querySelector('#loginSection .primary-btn');
 
-    let data = null, error = null;
-    try {
-        ({ data, error } = await getDbClient()
-            .from('students')
-            .select('*')
-            .eq('student_code', id)
-            .eq('password_legacy', pass)
-            .limit(1));
-    } catch (err) {
-        error = err;
-    }
+    await withButtonLoading(loginBtn, 'Logging in...', async () => {
+        let data = null, error = null;
+        try {
+            ({ data, error } = await getDbClient()
+                .from('students')
+                .select('*')
+                .eq('student_code', id)
+                .eq('password_legacy', pass)
+                .limit(1));
+        } catch (err) {
+            error = err;
+        }
 
-    if(error){
-        alert((error && error.message) ? error.message : 'Login failed');
-        return;
-    }
+        if(error){
+            alert((error && error.message) ? error.message : 'Login failed');
+            return;
+        }
 
-    let row = (data || [])[0];
-    if(!row){
-        alert("Invalid ID or Password");
-        return;
-    }
+        let row = (data || [])[0];
+        if(!row){
+            alert("Invalid ID or Password");
+            return;
+        }
 
-    if(row.status !== "approved"){
-        alert("Not approved by Admin yet.");
-        return;
-    }
+        if(row.status !== "approved"){
+            alert("Not approved by Admin yet.");
+            return;
+        }
 
-    const user = {
-        ...row,
-        row_id: row.id,
-        id: row.student_code || '',
-        password: row.password_legacy || '',
-        name: ((row.first_name||'') + ' ' + (row.last_name||'')).trim(),
-        firstName: row.first_name || '',
-        lastName: row.last_name || '',
-        guardianMobile: row.guardian_mobile || ''
-    };
+        const user = {
+            ...row,
+            row_id: row.id,
+            id: row.student_code || '',
+            password: row.password_legacy || '',
+            name: ((row.first_name||'') + ' ' + (row.last_name||'')).trim(),
+            firstName: row.first_name || '',
+            lastName: row.last_name || '',
+            guardianMobile: row.guardian_mobile || ''
+        };
 
-    localStorage.setItem("currentStudent", JSON.stringify(user));
-    localStorage.setItem("studentAuth", JSON.stringify({authenticated: true}));
-    alert("Login Successful.");
-    location.reload();
+        localStorage.setItem("currentStudent", JSON.stringify(user));
+        localStorage.setItem("studentAuth", JSON.stringify({authenticated: true}));
+        alert("Login Successful.");
+        location.reload();
+    });
 }
 
 // --- Data Loading ---
@@ -337,6 +343,7 @@ async function loadStudentNotes(){
     if(!currentStudent) return;
 
     let table = document.getElementById("studentNotesList");
+    setTableLoading(table, 'Loading notes...', 4);
     let subjectFilter = document.getElementById("studentSubjectFilter").value;
 
     const { data, error } = await getDbClient()
@@ -394,7 +401,7 @@ async function loadStudentAttendance(){
     if(!currentStudent) return;
 
     let table = document.getElementById("studentAttendanceList");
-    table.innerHTML = "";
+    setTableLoading(table, 'Loading attendance...', 3);
 
     const { data, error } = await getDbClient()
         .from('attendance')
@@ -430,6 +437,7 @@ async function loadStudentFeeDetails(){
     const fine = Number(s.fine || 0);
     const due = Math.max(0, total + fine - discount - paid);
     const summary = document.getElementById('studentFeeSummary');
+    summary.innerHTML = '<p><span class="inline-spinner" aria-hidden="true"></span>Loading fee details...</p>';
     summary.innerHTML = `
         <p><strong>Total Fee:</strong> Rs. ${total}</p>
         <p><strong>Paid:</strong> Rs. ${paid} | <strong>Discount:</strong> Rs. ${discount} | <strong>Fine:</strong> Rs. ${fine}</p>
@@ -437,7 +445,7 @@ async function loadStudentFeeDetails(){
     `;
 
     const paymentsTable = document.getElementById('studentPaymentList');
-    paymentsTable.innerHTML = '';
+    setTableLoading(paymentsTable, 'Loading payments...', 5);
     const { data: payments } = await getDbClient()
         .from('fee_payments')
         .select('*')
@@ -461,7 +469,7 @@ async function loadStudentTimetable(){
     let currentStudent = JSON.parse(localStorage.getItem("currentStudent"));
     if(!currentStudent) return;
     const tbody = document.getElementById('studentTimetableList');
-    tbody.innerHTML = '';
+    setTableLoading(tbody, 'Loading timetable...', 5);
     const { data, error } = await getDbClient().from('timetables').select('*').order('day_of_week').order('start_time');
     if(error){
         tbody.innerHTML = '<tr><td colspan=\"5\">Failed to load timetable</td></tr>';
@@ -486,7 +494,7 @@ async function loadStudentMarks(){
     let currentStudent = JSON.parse(localStorage.getItem("currentStudent"));
     if(!currentStudent) return;
     const tbody = document.getElementById('studentMarksList');
-    tbody.innerHTML = '';
+    setTableLoading(tbody, 'Loading marks...', 5);
     const { data, error } = await getDbClient()
         .from('exam_marks')
         .select('*')
@@ -519,9 +527,6 @@ function checkAuth(){
         document.getElementById("logoutBtn").classList.remove("hidden");
         loadStudentNotes();
         loadStudentAttendance();
-        loadStudentFeeDetails();
-        loadStudentTimetable();
-        loadStudentMarks();
         loadStudentFeeDetails();
         loadStudentTimetable();
         loadStudentMarks();

@@ -135,7 +135,7 @@
 <h2><i class="fas fa-lock"></i> Faculty Login</h2>
 <input type="text" id="loginFacId" placeholder="Faculty ID (e.g., FAC1001)">
 <input type="password" id="loginFacPass" placeholder="Password">
-<button onclick="facultyLogin()">Login</button>
+<button id="facultyLoginBtn" onclick="facultyLogin()">Login</button>
 <div id="facultyLoginError" style="color:#e74c3c; font-size:13px; margin-top:10px;"></div>
 
 </div>
@@ -169,7 +169,7 @@
     <input type="text" id="newFacPass" placeholder="Enter new password">
 </div>
 
-<button onclick="changeCredentials()" style="width:100%; background:linear-gradient(135deg, #27ae60 0%, #229954 100%); color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">
+<button id="changeCredBtn" onclick="changeCredentials()" style="width:100%; background:linear-gradient(135deg, #27ae60 0%, #229954 100%); color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; font-weight:600; font-size:14px;">
     <i class="fas fa-save"></i> Save New Credentials
 </button>
 </div>
@@ -186,7 +186,7 @@
 
 <div id="studentList"></div>
 
-<button onclick="saveAttendance()">Save Attendance</button>
+<button id="saveAttendanceBtn" onclick="saveAttendance()">Save Attendance</button>
 </div>
 
 <!-- Upload Notes Section -->
@@ -212,7 +212,7 @@
 <label>Attach File (PDF / Image / Word)</label>
 <input type="file" id="noteFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.xls,.xlsx,image/*">
 
-<button onclick="uploadNote()">Upload</button>
+<button id="uploadNoteBtn" onclick="uploadNote()">Upload</button>
 
 <hr>
 <h3>Your Uploaded Files</h3>
@@ -251,7 +251,7 @@ style="border-collapse:collapse; background:#fff;">
 <input type="text" id="ttSubject" placeholder="e.g., Maths">
 <label>Room</label>
 <input type="text" id="ttRoom" placeholder="e.g., Room 2">
-<button onclick="saveTimetableEntry()">Save Timetable Entry</button>
+<button id="saveTimetableBtn" onclick="saveTimetableEntry()">Save Timetable Entry</button>
 </div>
 
 <div class="card">
@@ -272,7 +272,7 @@ style="border-collapse:collapse; background:#fff;">
 <input type="number" id="marksObtained" placeholder="e.g., 84">
 <label>Remarks</label>
 <input type="text" id="marksRemarks" placeholder="Optional">
-<button onclick="saveExamMarks()">Save Marks</button>
+<button id="saveMarksBtn" onclick="saveExamMarks()">Save Marks</button>
 </div>
 
 </div>

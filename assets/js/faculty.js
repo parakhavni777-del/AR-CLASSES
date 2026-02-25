@@ -72,6 +72,8 @@ function logoutFaculty() {
 
 // CHANGE CREDENTIALS FUNCTION
 async function changeCredentials(){
+    const saveBtn = document.getElementById('changeCredBtn');
+    await withButtonLoading(saveBtn, 'Saving...', async () => {
     let newId = document.getElementById('newFacId').value.trim();
     let newPass = document.getElementById('newFacPass').value.trim();
 
@@ -116,6 +118,7 @@ async function changeCredentials(){
     document.getElementById('newFacPass').value = '';
 
     alert('Credentials updated successfully!');
+    });
 }
 function showRegister() {
     document.getElementById("registerSection").style.display="block";
@@ -228,7 +231,7 @@ function updateTables(){
 async function registerFaculty(){
 try {
 let registerBtn = document.getElementById("registerFacultyBtn");
-if(registerBtn) registerBtn.disabled = true;
+if(registerBtn) setButtonLoading(registerBtn, true, 'Registering...');
 
 let name=document.getElementById("name").value.trim();
 let qualification=document.getElementById("qualification").value.trim();
@@ -293,12 +296,14 @@ setTimeout(()=>{location.href="index.html";}, 1000);
     alert('Registration failed: ' + (err && err.message ? err.message : err));
 } finally {
     let registerBtn = document.getElementById("registerFacultyBtn");
-    if(registerBtn) registerBtn.disabled = false;
+    if(registerBtn) setButtonLoading(registerBtn, false);
 }
 }
 
 /* LOGIN */
 async function facultyLogin(){
+    const loginBtn = document.getElementById('facultyLoginBtn');
+    await withButtonLoading(loginBtn, 'Logging in...', async () => {
     let facId = document.getElementById("loginFacId").value.trim();
     let facPass = document.getElementById("loginFacPass").value.trim();
     let errorDiv = document.getElementById("facultyLoginError");
@@ -345,6 +350,7 @@ async function facultyLogin(){
     loadFacultyClasses();
     loadStudentsForMarks();
     await displayNotes();
+    });
 }
 
 /* LOAD CLASSES */
@@ -472,6 +478,7 @@ let studentDiv=document.getElementById("studentList");
 studentDiv.innerHTML="";
 
 if(!selectedClass) return;
+studentDiv.innerHTML = '<p><span class="inline-spinner" aria-hidden="true"></span> Loading students...</p>';
 
 let approvedStudents = [];
 let data = null, error = null;
@@ -532,6 +539,8 @@ studentDiv.appendChild(row);
 }
 
 async function saveAttendance(){
+const saveBtn = document.getElementById('saveAttendanceBtn');
+await withButtonLoading(saveBtn, 'Saving attendance...', async () => {
 
 let date=document.getElementById("attDate").value;
 let selectedClass=document.getElementById("attClass").value;
@@ -575,10 +584,13 @@ if(error){
 }
 
 alert("Attendance Saved Successfully");
+});
 }
 
 /* UPLOAD NOTES */
 async function uploadNote(){
+const uploadBtn = document.getElementById('uploadNoteBtn');
+await withButtonLoading(uploadBtn, 'Uploading...', async () => {
 
 let title=document.getElementById("noteTitle").value.trim();
 let selectedClass=document.getElementById("noteClass").value;
@@ -663,6 +675,7 @@ alert("Uploaded Successfully");
 fileInput.value = '';
 document.getElementById('noteTitle').value = '';
 await displayNotes();
+});
 }
 
 async function getNoteDownloadUrl(note){
@@ -696,7 +709,7 @@ let myNotes=(data||[]);
 myNotesCache = myNotes;
 
 let tableBody=document.getElementById("notesList");
-tableBody.innerHTML="";
+setTableLoading(tableBody, 'Loading uploaded files...', 6);
 
 if(myNotes.length===0){
 tableBody.innerHTML=`
@@ -812,6 +825,8 @@ await displayNotes();
 }
 
 async function saveTimetableEntry(){
+const saveBtn = document.getElementById('saveTimetableBtn');
+await withButtonLoading(saveBtn, 'Saving...', async () => {
 let cls = document.getElementById('ttClass').value;
 let day = document.getElementById('ttDay').value;
 let start = document.getElementById('ttStart').value;
@@ -841,6 +856,7 @@ document.getElementById('ttStart').value = '';
 document.getElementById('ttEnd').value = '';
 document.getElementById('ttSubject').value = '';
 document.getElementById('ttRoom').value = '';
+});
 }
 
 let marksStudentsCache = [];
@@ -848,7 +864,7 @@ async function loadStudentsForMarks(){
 let cls = document.getElementById('marksClass') ? document.getElementById('marksClass').value : '';
 let studentSelect = document.getElementById('marksStudent');
 if(!studentSelect) return;
-studentSelect.innerHTML = '<option value=\"\">Select Student</option>';
+studentSelect.innerHTML = '<option value=\"\">Loading students...</option>';
 if(!cls) return;
 
 const { data, error } = await supabase.from('students').select('*').order('created_at', { ascending: false });
@@ -861,9 +877,14 @@ marksStudentsCache.forEach((s, idx) => {
     const name = ((s.first_name || '') + ' ' + (s.last_name || '')).trim();
     studentSelect.innerHTML += '<option value=\"' + idx + '\">' + name + '</option>';
 });
+if(marksStudentsCache.length === 0){
+    studentSelect.innerHTML = '<option value=\"\">No students found</option>';
+}
 }
 
 async function saveExamMarks(){
+const saveBtn = document.getElementById('saveMarksBtn');
+await withButtonLoading(saveBtn, 'Saving marks...', async () => {
 let cls = document.getElementById('marksClass').value;
 let studentIndex = document.getElementById('marksStudent').value;
 let subject = document.getElementById('marksSubject').value.trim();
@@ -906,6 +927,7 @@ document.getElementById('marksDate').value = '';
 document.getElementById('marksMax').value = '';
 document.getElementById('marksObtained').value = '';
 document.getElementById('marksRemarks').value = '';
+});
 }
 
 /* LOGOUT */

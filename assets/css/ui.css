@@ -36,3 +36,31 @@
     bottom: 12px;
   }
 }
+
+.btn-loading {
+  opacity: 0.75;
+  cursor: not-allowed !important;
+}
+
+.inline-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-top-color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: -2px;
+  margin-right: 8px;
+  animation: spin 700ms linear infinite;
+}
+
+.table-loading-cell {
+  text-align: center;
+  color: #355b97;
+  font-weight: 600;
+  padding: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

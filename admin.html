@@ -187,7 +187,7 @@
     <input type="number" id="feeDiscountInput" placeholder="Discount">
     <input type="number" id="feeFineInput" placeholder="Fine">
 </div>
-<button onclick="saveStudentFeeProfile()">Save Fee Profile</button>
+<button id="saveFeeProfileBtn" onclick="saveStudentFeeProfile()">Save Fee Profile</button>
 <hr>
 <h3>Record Cash Payment</h3>
 <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
@@ -196,7 +196,7 @@
     <input type="text" id="paymentReceiptInput" placeholder="Receipt No">
     <input type="text" id="paymentNoteInput" placeholder="Note (optional)">
 </div>
-<button onclick="recordFeePayment()">Add Payment Entry</button>
+<button id="recordPaymentBtn" onclick="recordFeePayment()">Add Payment Entry</button>
 <table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
 <thead style="background:#dfe6e9;"><tr><th>Date</th><th>Amount</th><th>Receipt</th><th>Mode</th><th>Note</th></tr></thead>
 <tbody id="adminPaymentList"></tbody>
@@ -219,7 +219,7 @@
     <input type="text" id="adminTtFaculty" placeholder="Faculty Name">
     <input type="text" id="adminTtRoom" placeholder="Room">
 </div>
-<button onclick="saveAdminTimetable()">Save Timetable Entry</button>
+<button id="saveAdminTtBtn" onclick="saveAdminTimetable()">Save Timetable Entry</button>
 <table border="1" width="100%" cellpadding="8" style="border-collapse:collapse; background:#fff;">
 <thead style="background:#dfe6e9;"><tr><th>Class</th><th>Day</th><th>Time</th><th>Subject</th><th>Faculty</th><th>Room</th><th>Action</th></tr></thead>
 <tbody id="adminTimetableList"></tbody>

@@ -1,6 +1,12 @@
 const SUPABASE_URL = "https://kgijlxshajimjbqcrygg.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_1ujAiqxV8MEd0E3SWEIrlQ_EQjM8edG";
 let supabaseClient = null;
+function showInlineError(errorDiv, message) {
+    if (!errorDiv) return;
+    errorDiv.textContent = message || '';
+    errorDiv.style.display = message ? 'block' : 'none';
+    if (message && window.notifyError) window.notifyError(message);
+}
 
 async function ensureSupabaseClient() {
     if (supabaseClient) return supabaseClient;
@@ -47,35 +53,35 @@ async function loginAdmin(e) {
     let user = document.getElementById('adminUser').value.trim();
     let pass = document.getElementById('adminPass').value;
     let errorDiv = document.getElementById('adminError');
+    const submitBtn = document.querySelector('#adminForm button[type="submit"]');
 
-    errorDiv.style.display = 'none';
+    showInlineError(errorDiv, '');
     if(!user || !pass) {
-        errorDiv.textContent = 'Invalid admin credentials';
-        errorDiv.style.display = 'block';
+        showInlineError(errorDiv, 'Invalid admin credentials');
         return;
     }
 
-    try {
-        const sb = await ensureSupabaseClient();
+    await withButtonLoading(submitBtn, 'Logging in...', async () => {
+        try {
+            const sb = await ensureSupabaseClient();
 
-        const { error: signInError } = await sb.auth.signInWithPassword({
-            email: user,
-            password: pass
-        });
+            const { error: signInError } = await sb.auth.signInWithPassword({
+                email: user,
+                password: pass
+            });
 
-        if(signInError) {
-            errorDiv.textContent = signInError.message || 'Admin login failed';
-            errorDiv.style.display = 'block';
+            if(signInError) {
+                showInlineError(errorDiv, signInError.message || 'Admin login failed');
+                return;
+            }
+        } catch (err) {
+            showInlineError(errorDiv, (err && err.message) ? err.message : 'Unexpected login error');
             return;
         }
-    } catch (err) {
-        errorDiv.textContent = (err && err.message) ? err.message : 'Unexpected login error';
-        errorDiv.style.display = 'block';
-        return;
-    }
 
-    localStorage.setItem('adminAuth', JSON.stringify({authenticated: true, user: user}));
-    window.location.href = 'admin.html';
+        localStorage.setItem('adminAuth', JSON.stringify({authenticated: true, user: user}));
+        window.location.href = 'admin.html';
+    });
 }
 // FACULTY LOGIN
 async function loginFaculty(e) {
@@ -83,58 +89,56 @@ async function loginFaculty(e) {
     let facId = document.getElementById('facultyId').value.trim();
     let facPass = document.getElementById('facultyPass').value;
     let errorDiv = document.getElementById('facultyError');
-    errorDiv.style.display = 'none';
+    const submitBtn = document.querySelector('#facultyForm button[type="submit"]');
+    showInlineError(errorDiv, '');
 
     if(!facId || !facPass){
-        errorDiv.textContent = 'Please enter Faculty ID and password';
-        errorDiv.style.display = 'block';
+        showInlineError(errorDiv, 'Please enter Faculty ID and password');
         return;
     }
 
-    let data = null, error = null;
-    try {
-        const sb = await ensureSupabaseClient();
-        ({ data, error } = await sb
-            .from('faculty')
-            .select('*')
-            .eq('faculty_code', facId)
-            .eq('password_legacy', facPass)
-            .limit(1));
-    } catch (err) {
-        errorDiv.textContent = (err && err.message) ? err.message : 'Login failed';
-        errorDiv.style.display = 'block';
-        return;
-    }
+    await withButtonLoading(submitBtn, 'Logging in...', async () => {
+        let data = null, error = null;
+        try {
+            const sb = await ensureSupabaseClient();
+            ({ data, error } = await sb
+                .from('faculty')
+                .select('*')
+                .eq('faculty_code', facId)
+                .eq('password_legacy', facPass)
+                .limit(1));
+        } catch (err) {
+            showInlineError(errorDiv, (err && err.message) ? err.message : 'Login failed');
+            return;
+        }
 
-    if(error){
-        errorDiv.textContent = error.message || 'Login failed';
-        errorDiv.style.display = 'block';
-        return;
-    }
+        if(error){
+            showInlineError(errorDiv, error.message || 'Login failed');
+            return;
+        }
 
-    const exact = (data || [])[0];
-    if(!exact){
-        errorDiv.textContent = 'Invalid Faculty ID or password';
-        errorDiv.style.display = 'block';
-        return;
-    }
+        const exact = (data || [])[0];
+        if(!exact){
+            showInlineError(errorDiv, 'Invalid Faculty ID or password');
+            return;
+        }
 
-    if(exact.status !== 'approved'){
-        errorDiv.textContent = 'Faculty pending admin approval or rejected';
-        errorDiv.style.display = 'block';
-        return;
-    }
+        if(exact.status !== 'approved'){
+            showInlineError(errorDiv, 'Faculty pending admin approval or rejected');
+            return;
+        }
 
-    const user = {
-        ...exact,
-        row_id: exact.id,
-        id: exact.faculty_code || '',
-        password: exact.password_legacy || ''
-    };
+        const user = {
+            ...exact,
+            row_id: exact.id,
+            id: exact.faculty_code || '',
+            password: exact.password_legacy || ''
+        };
 
-    localStorage.setItem('currentFaculty', JSON.stringify(user));
-    localStorage.setItem('facultyAuth', JSON.stringify({authenticated: true}));
-    window.location.href = 'faculty.html';
+        localStorage.setItem('currentFaculty', JSON.stringify(user));
+        localStorage.setItem('facultyAuth', JSON.stringify({authenticated: true}));
+        window.location.href = 'faculty.html';
+    });
 }
 // STUDENT LOGIN
 async function loginStudent(e) {
@@ -142,61 +146,59 @@ async function loginStudent(e) {
     let id = document.getElementById('studentId').value.trim();
     let pass = document.getElementById('studentPass').value;
     let errorDiv = document.getElementById('studentError');
-    errorDiv.style.display = 'none';
+    const submitBtn = document.querySelector('#studentForm button[type="submit"]');
+    showInlineError(errorDiv, '');
 
     if(!id || !pass){
-        errorDiv.textContent = 'Please enter ID and password';
-        errorDiv.style.display = 'block';
+        showInlineError(errorDiv, 'Please enter ID and password');
         return;
     }
 
-    let data = null, error = null;
-    try {
-        const sb = await ensureSupabaseClient();
-        ({ data, error } = await sb
-            .from('students')
-            .select('*')
-            .eq('student_code', id)
-            .eq('password_legacy', pass)
-            .limit(1));
-    } catch (err) {
-        errorDiv.textContent = (err && err.message) ? err.message : 'Login failed';
-        errorDiv.style.display = 'block';
-        return;
-    }
+    await withButtonLoading(submitBtn, 'Logging in...', async () => {
+        let data = null, error = null;
+        try {
+            const sb = await ensureSupabaseClient();
+            ({ data, error } = await sb
+                .from('students')
+                .select('*')
+                .eq('student_code', id)
+                .eq('password_legacy', pass)
+                .limit(1));
+        } catch (err) {
+            showInlineError(errorDiv, (err && err.message) ? err.message : 'Login failed');
+            return;
+        }
 
-    if(error){
-        errorDiv.textContent = error.message || 'Login failed';
-        errorDiv.style.display = 'block';
-        return;
-    }
+        if(error){
+            showInlineError(errorDiv, error.message || 'Login failed');
+            return;
+        }
 
-    const userRow = (data || [])[0];
-    if(!userRow){
-        errorDiv.textContent = 'Invalid ID or password';
-        errorDiv.style.display = 'block';
-        return;
-    }
+        const userRow = (data || [])[0];
+        if(!userRow){
+            showInlineError(errorDiv, 'Invalid ID or password');
+            return;
+        }
 
-    if(userRow.status !== 'approved'){
-        errorDiv.textContent = 'Not approved by admin yet';
-        errorDiv.style.display = 'block';
-        return;
-    }
+        if(userRow.status !== 'approved'){
+            showInlineError(errorDiv, 'Not approved by admin yet');
+            return;
+        }
 
-    const user = {
-        ...userRow,
-        row_id: userRow.id,
-        id: userRow.student_code || '',
-        password: userRow.password_legacy || '',
-        firstName: userRow.first_name || '',
-        lastName: userRow.last_name || '',
-        guardianMobile: userRow.guardian_mobile || ''
-    };
+        const user = {
+            ...userRow,
+            row_id: userRow.id,
+            id: userRow.student_code || '',
+            password: userRow.password_legacy || '',
+            firstName: userRow.first_name || '',
+            lastName: userRow.last_name || '',
+            guardianMobile: userRow.guardian_mobile || ''
+        };
 
-    localStorage.setItem('currentStudent', JSON.stringify(user));
-    localStorage.setItem('studentAuth', JSON.stringify({authenticated: true}));
-    window.location.href = 'student.html';
+        localStorage.setItem('currentStudent', JSON.stringify(user));
+        localStorage.setItem('studentAuth', JSON.stringify({authenticated: true}));
+        window.location.href = 'student.html';
+    });
 }
 // MODAL FUNCTIONS
 function showFacultyRegister() {
@@ -226,6 +228,7 @@ window.onclick = function(event) {
 // FACULTY REGISTRATION FROM INDEX
 async function registerFacultyFromIndex(e) {
     e.preventDefault();
+    const submitBtn = e && e.target ? e.target.querySelector('button[type="submit"]') : null;
     let name = document.getElementById('regFacultyName').value.trim();
     let qualification = document.getElementById('regFacultyQualification').value.trim();
     let contact = document.getElementById('regFacultyContact').value.trim();
@@ -241,63 +244,66 @@ async function registerFacultyFromIndex(e) {
         return;
     }
 
-    let sb;
-    try {
-        sb = await ensureSupabaseClient();
-    } catch (err) {
-        alert('Registration failed: ' + ((err && err.message) ? err.message : err));
-        return;
-    }
-    const { data: existing, error: findError } = await sb
-        .from('faculty')
-        .select('id,name,contact')
-        .eq('contact', contact);
+    await withButtonLoading(submitBtn, 'Registering...', async () => {
+        let sb;
+        try {
+            sb = await ensureSupabaseClient();
+        } catch (err) {
+            alert('Registration failed: ' + ((err && err.message) ? err.message : err));
+            return;
+        }
+        const { data: existing, error: findError } = await sb
+            .from('faculty')
+            .select('id,name,contact')
+            .eq('contact', contact);
 
-    if(findError){
-        alert('Registration failed: ' + findError.message);
-        return;
-    }
+        if(findError){
+            alert('Registration failed: ' + findError.message);
+            return;
+        }
 
-    const exists = (existing || []).find(f => (f.name || '').toLowerCase() === name.toLowerCase());
-    if(exists) {
-        alert('Faculty already registered with this name and contact');
-        return;
-    }
+        const exists = (existing || []).find(f => (f.name || '').toLowerCase() === name.toLowerCase());
+        if(exists) {
+            alert('Faculty already registered with this name and contact');
+            return;
+        }
 
-    const { error: insertErrorBase } = await sb.from('faculty').insert({
-        name: name,
-        qualification: qualification,
-        contact: contact,
-        email: email,
-        subjects: [],
-        classes: [],
-        status: 'pending'
-    });
-
-    let insertError = insertErrorBase || null;
-    if(insertError && /column|schema cache|subjects|classes|email/i.test(insertError.message || '')){
-        const { error: fallbackInsertError } = await sb.from('faculty').insert({
+        const { error: insertErrorBase } = await sb.from('faculty').insert({
             name: name,
             qualification: qualification,
             contact: contact,
+            email: email,
+            subjects: [],
+            classes: [],
             status: 'pending'
         });
-        insertError = fallbackInsertError || null;
-    }
-    if(insertError){
-        alert('Registration failed: ' + insertError.message);
-        return;
-    }
 
-    closeModal('facultyRegisterModal');
-    alert('Registration successful!\nWait for Admin approval.\n\nRedirecting to Faculty Panel...');
-    setTimeout(() => {
-        window.location.href = 'faculty.html';
-    }, 500);
+        let insertError = insertErrorBase || null;
+        if(insertError && /column|schema cache|subjects|classes|email/i.test(insertError.message || '')){
+            const { error: fallbackInsertError } = await sb.from('faculty').insert({
+                name: name,
+                qualification: qualification,
+                contact: contact,
+                status: 'pending'
+            });
+            insertError = fallbackInsertError || null;
+        }
+        if(insertError){
+            alert('Registration failed: ' + insertError.message);
+            return;
+        }
+
+        closeModal('facultyRegisterModal');
+        alert('Registration successful!\nWait for Admin approval.\n\nRedirecting to Faculty Panel...');
+        setTimeout(() => {
+            window.location.href = 'faculty.html';
+        }, 500);
+    });
 }
 // STUDENT REGISTRATION FROM INDEX
 async function registerStudentFromIndex(e) {
     e.preventDefault();
+    const submitBtn = e && e.target ? e.target.querySelector('button[type="submit"]') : null;
     let firstName = document.getElementById('regStudentFirstName').value.trim();
     let lastName = document.getElementById('regStudentLastName').value.trim();
     let school = document.getElementById('regStudentSchool').value.trim();
@@ -315,36 +321,38 @@ async function registerStudentFromIndex(e) {
         return;
     }
 
-    let sb;
-    try {
-        sb = await ensureSupabaseClient();
-    } catch (err) {
-        alert('Registration failed: ' + ((err && err.message) ? err.message : err));
-        return;
-    }
-    const { error } = await sb.from('students').insert({
-        first_name: firstName,
-        last_name: lastName,
-        school: school,
-        guardian: guardian,
-        guardian_mobile: guardianMobile,
-        class: classVal,
-        subjects: [],
-        monthly_fee: 0,
-        course_fee: 0,
-        status: 'pending'
+    await withButtonLoading(submitBtn, 'Registering...', async () => {
+        let sb;
+        try {
+            sb = await ensureSupabaseClient();
+        } catch (err) {
+            alert('Registration failed: ' + ((err && err.message) ? err.message : err));
+            return;
+        }
+        const { error } = await sb.from('students').insert({
+            first_name: firstName,
+            last_name: lastName,
+            school: school,
+            guardian: guardian,
+            guardian_mobile: guardianMobile,
+            class: classVal,
+            subjects: [],
+            monthly_fee: 0,
+            course_fee: 0,
+            status: 'pending'
+        });
+
+        if(error){
+            alert('Registration failed: ' + error.message);
+            return;
+        }
+
+        closeModal('studentRegisterModal');
+        alert('Registration Successful!\n\nYour application is pending admin approval.\nAdmin will assign your Student ID and Password.\n\nRedirecting to Student Panel...');
+        setTimeout(() => {
+            window.location.href = 'student.html';
+        }, 500);
     });
-
-    if(error){
-        alert('Registration failed: ' + error.message);
-        return;
-    }
-
-    closeModal('studentRegisterModal');
-    alert('Registration Successful!\n\nYour application is pending admin approval.\nAdmin will assign your Student ID and Password.\n\nRedirecting to Student Panel...');
-    setTimeout(() => {
-        window.location.href = 'student.html';
-    }, 500);
 }
 function showAlert() {
     alert('Please register through your respective panel first!\\n\\n' +

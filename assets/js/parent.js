@@ -25,24 +25,28 @@ async function parentLogin(){
   const id = document.getElementById('parentId').value.trim();
   const pass = document.getElementById('parentPass').value.trim();
   const err = document.getElementById('loginErr');
+  const loginBtn = document.querySelector('#authCard button');
   err.textContent = '';
-  if(!id || !pass){ err.textContent = 'Enter Parent ID and password'; return; }
+  if(!id || !pass){ err.textContent = 'Enter Parent ID and password'; if(window.notifyError) window.notifyError('Enter Parent ID and password'); return; }
 
-  const { data, error } = await sb
-    .from('students')
-    .select('*')
-    .eq('parent_code', id)
-    .eq('parent_password_legacy', pass)
-    .limit(1);
+  await withButtonLoading(loginBtn, 'Logging in...', async () => {
+    const { data, error } = await sb
+      .from('students')
+      .select('*')
+      .eq('parent_code', id)
+      .eq('parent_password_legacy', pass)
+      .limit(1);
 
-  if(error){ err.textContent = error.message; return; }
-  const row = (data || [])[0];
-  if(!row){ err.textContent = 'Invalid Parent ID or password'; return; }
-  if((row.status || '').toLowerCase() !== 'approved'){ err.textContent = 'Student not approved yet'; return; }
+    if(error){ err.textContent = error.message; if(window.notifyError) window.notifyError(error.message); return; }
+    const row = (data || [])[0];
+    if(!row){ err.textContent = 'Invalid Parent ID or password'; if(window.notifyError) window.notifyError('Invalid Parent ID or password'); return; }
+    if((row.status || '').toLowerCase() !== 'approved'){ err.textContent = 'Student not approved yet'; if(window.notifyError) window.notifyError('Student not approved yet'); return; }
 
-  localStorage.setItem('parentAuth', JSON.stringify({ authenticated: true }));
-  localStorage.setItem('currentParentStudent', JSON.stringify({ ...row, row_id: row.id }));
-  await loadDashboard();
+    localStorage.setItem('parentAuth', JSON.stringify({ authenticated: true }));
+    localStorage.setItem('currentParentStudent', JSON.stringify({ ...row, row_id: row.id }));
+    await loadDashboard();
+    if(window.notifySuccess) window.notifySuccess('Parent login successful');
+  });
 }
 
 function logoutParent(){
@@ -82,6 +86,7 @@ async function loadDashboard(){
 }
 
 async function loadParentPayments(studentId){
+  setTableLoading('paymentList', 'Loading payments...', 5);
   const { data } = await sb.from('fee_payments').select('*').eq('student_id', studentId).order('payment_date', { ascending: false });
   const tbody = document.getElementById('paymentList');
   tbody.innerHTML = '';
@@ -92,6 +97,7 @@ async function loadParentPayments(studentId){
 }
 
 async function loadParentNotes(cls){
+  setTableLoading('noteList', 'Loading notes...', 4);
   const { data } = await sb.from('notes').select('*').eq('class', cls).order('created_at', { ascending: false });
   const tbody = document.getElementById('noteList');
   tbody.innerHTML = '';
@@ -105,6 +111,7 @@ async function loadParentNotes(cls){
 }
 
 async function loadParentAttendance(studentId){
+  setTableLoading('attendanceList', 'Loading attendance...', 3);
   const { data } = await sb.from('attendance').select('*').eq('student_id', studentId).order('date', { ascending: false });
   const tbody = document.getElementById('attendanceList');
   tbody.innerHTML = '';
@@ -115,6 +122,7 @@ async function loadParentAttendance(studentId){
 }
 
 async function loadParentTimetable(cls){
+  setTableLoading('timetableList', 'Loading timetable...', 5);
   const { data } = await sb.from('timetables').select('*').order('day_of_week').order('start_time');
   const tbody = document.getElementById('timetableList');
   tbody.innerHTML = '';
@@ -125,6 +133,7 @@ async function loadParentTimetable(cls){
 }
 
 async function loadParentMarks(studentId){
+  setTableLoading('marksList', 'Loading marks...', 5);
   const { data } = await sb.from('exam_marks').select('*').eq('student_id', studentId).order('exam_date', { ascending: false });
   const tbody = document.getElementById('marksList');
   tbody.innerHTML = '';
