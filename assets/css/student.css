@@ -1,0 +1,158 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+    body{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+    }
+    header{
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        position: relative;
+    }
+    header h1 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        font-size: 28px;
+    }
+    .logo {
+        height: 50px;
+        width: 50px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 700;
+        color: #2a5298;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .logout-btn {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .logout-btn:hover { transform: translateY(-50%) scale(1.05); background: #c0392b; }
+    .container{
+        max-width: 1000px;
+        margin: 30px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    h2, h3{
+        margin-top: 0;
+        color: #1e3c72;
+        border-bottom: 3px solid #2a5298;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    input, select, textarea {
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #2a5298;
+        box-shadow: 0 0 8px rgba(42, 82, 152, 0.3);
+    }
+    button{
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        margin: 4px;
+    }
+    .primary-btn{
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .primary-btn:hover{
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+    }
+    .action-btn{
+        background: #2a5298;
+        color: white;
+        box-shadow: 0 2px 8px rgba(42, 82, 152, 0.3);
+    }
+    .action-btn:hover{
+        background: #1e3c72;
+        transform: translateY(-2px);
+    }
+    .hidden{ display: none !important; }
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th{
+        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+    td{
+        border-bottom: 1px solid #e0e0e0;
+        padding: 12px 15px;
+    }
+    tr:hover { background-color: #f8f9ff; }
+    tr:last-child td { border-bottom: none; }
+    .card {
+        max-width: 1000px;
+        margin: 20px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-left: 5px solid #2a5298;
+    }
+    .card h2, .card h3 { border-bottom: 2px solid #e0e0e0; margin-bottom: 15px; }
+    label {
+        display: block;
+        margin: 15px 0 5px 0;
+        font-weight: 600;
+        color: #1e3c72;
+    }
+    #welcomeButtons { text-align: center; margin: 30px 0; }
+    @media (max-width: 768px) {
+        .container { padding: 15px; margin: 15px; }
+        header h1 { font-size: 18px; }
+        .logo { height: 35px; width: 35px; }
+        .logout-btn { padding: 8px 12px; font-size: 12px; right: 10px; }
+        table { font-size: 12px; }
+        th, td { padding: 8px; }
+        button { padding: 8px 12px; font-size: 12px; }
+    }

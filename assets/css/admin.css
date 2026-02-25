@@ -1,0 +1,137 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        min-height: 100vh;
+    }
+    header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    header h1 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        font-size: 28px;
+    }
+    .logo {
+        height: 50px;
+        width: 50px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: #2a5298;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .section {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .form-box {
+        background: white;
+        max-width: 1100px;
+        margin: auto;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th {
+        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        color: white;
+        padding: 12px;
+        text-align: center;
+        font-weight: 600;
+    }
+    td {
+        border-bottom: 1px solid #e0e0e0;
+        padding: 10px;
+        text-align: center;
+    }
+    tr:hover { background-color: #f8f9ff; }
+    tr:last-child td { border-bottom: none; }
+    button {
+        padding: 8px 14px;
+        margin: 4px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 12px;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    input, select {
+        padding: 10px;
+        width: 100%;
+        margin-bottom: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    input:focus, select:focus { outline: none; border-color: #2a5298; }
+    hr { margin: 30px 0; border: 0; border-top: 2px solid #e0e0e0; }
+    h2 { color: #1e3c72; border-bottom: 3px solid #2a5298; padding-bottom: 10px; margin-bottom: 15px; }
+    h3 { color: #2a5298; }
+    .toggle {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+    }
+    .toggle.active {
+        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+    }
+    button.delete {
+        background: #e74c3c;
+        color: white;
+    }
+    button.update {
+        background: #2a5298;
+        color: white;
+    }
+    button.reject {
+        background: #8e44ad;
+        color: white;
+    }
+    button:not(.toggle):not(.delete):not(.update):not(.reject) {
+        background: #27ae60;
+        color: white;
+    }
+    .card {
+        background: white;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 1100px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-left: 5px solid #2a5298;
+    }
+    @media (max-width: 768px) {
+        header h1 { font-size: 18px; }
+        .logo { height: 35px; width: 35px; }
+        .form-box { padding: 15px; }
+        table { font-size: 12px; }
+        th, td { padding: 6px; }
+        button { padding: 6px 10px; font-size: 11px; }
+        input, select { margin-bottom: 8px; }
+    }

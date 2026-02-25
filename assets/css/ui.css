@@ -1,0 +1,66 @@
+.snackbar-root {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+  width: min(380px, calc(100vw - 32px));
+}
+
+.snackbar {
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  line-height: 1.35;
+  animation: snackIn 180ms ease-out;
+}
+
+.snackbar.success { background: #1f9d55; }
+.snackbar.error { background: #d64545; }
+.snackbar.info { background: #2a5298; }
+
+@keyframes snackIn {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .snackbar-root {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    bottom: 12px;
+  }
+}
+
+.btn-loading {
+  opacity: 0.75;
+  cursor: not-allowed !important;
+}
+
+.inline-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-top-color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: -2px;
+  margin-right: 8px;
+  animation: spin 700ms linear infinite;
+}
+
+.table-loading-cell {
+  text-align: center;
+  color: #355b97;
+  font-weight: 600;
+  padding: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

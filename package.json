@@ -1,0 +1,16 @@
+{
+  "name": "ar-classes",
+  "version": "1.0.0",
+  "description": "A comprehensive web-based management system for AR Classes with three distinct portals (Admin, Faculty, Student) sharing a common login interface, Blue & Silver theme, and your custom logo.",
+  "main": "sw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.97.0"
+  }
+}
